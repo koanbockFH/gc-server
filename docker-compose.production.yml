@@ -9,6 +9,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: attendance
     ports:
-      - '3306:3306'
+      - '52000:3306'
     networks:
-      - 'att_bridge'
+      - att_bridge
+networks:
+  att_bridge:
+    external: true

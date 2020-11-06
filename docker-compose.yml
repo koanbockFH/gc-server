@@ -1,0 +1,12 @@
+# only used for database dependency
+version: '3'
+
+services:
+  vegas_database:
+    image: mysql:5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: attendance
+    ports:
+      - '3306:3306'

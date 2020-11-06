@@ -76,7 +76,7 @@ describe('UserRepository', () => {
       expect(joe[0].lastName).toBe('Smith');
     });
 
-    test('Search by partial username', async () => {
+    test('Search by partial code', async () => {
       const userRepository = await initRepository();
 
       const joe = await userRepository.findBySearchArg('j_');
@@ -98,7 +98,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'john',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_1@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       const user_2: User = new User({
@@ -107,7 +108,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'johannesM',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_2@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       const user_3: User = new User({
@@ -116,7 +118,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'johnsonMu',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_3@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       await userRepository.insert(user_1);
@@ -125,8 +128,8 @@ describe('UserRepository', () => {
 
       const users = await userRepository.findBySearchArg('Joh');
       expect(users).toHaveLength(3);
-      expect(users[0].code).toBe(user_2.code);
-      expect(users[1].code).toBe(user_1.code);
+      expect(users[0].code).toBe(user_1.code);
+      expect(users[1].code).toBe(user_2.code);
       expect(users[2].code).toBe(user_3.code);
     });
 
@@ -138,7 +141,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'john',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_1@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       const user_2: User = new User({
@@ -147,7 +151,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'johannesM',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_2@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       const user_3: User = new User({
@@ -156,7 +161,8 @@ describe('UserRepository', () => {
         lastName: 'Mustermann',
         code: 'johnsonMu',
         password: 'SomeHash',
-        mail: 'user@example.com',
+        mail: 'user_3@example.com',
+        userType: UserEnum.ADMIN,
       });
 
       await userRepository.insert(user_1);
@@ -165,8 +171,8 @@ describe('UserRepository', () => {
 
       const users = await userRepository.findBySearchArg('Joh', 2);
       expect(users).toHaveLength(2);
-      expect(users[0].code).toBe(user_2.code);
-      expect(users[1].code).toBe(user_1.code);
+      expect(users[0].code).toBe(user_1.code);
+      expect(users[1].code).toBe(user_2.code);
     });
   });
 
@@ -180,6 +186,7 @@ describe('UserRepository', () => {
         code: 'ssb',
         password: 'SomeHash',
         mail: 'saveboy@example.com',
+        userType: UserEnum.ADMIN,
       });
       await userRepository.saveOrUpdate(user);
 
@@ -205,9 +212,10 @@ describe('UserRepository', () => {
         id: 0, //only id == 0 will insert
         firstName: '',
         lastName: '',
-        username: 'ssb', //not empty to be able to check later
+        code: 'ssb', //not empty to be able to check later
         password: 'SomeHash', //not empty to be able to check later
         mail: 'saveboyexample.com', //No Mail Format
+        userType: UserEnum.ADMIN,
       });
 
       //test validation itself

@@ -38,7 +38,7 @@ describe('UsersService', () => {
       id: 0,
       firstName: 'Max',
       lastName: 'Mustermann',
-      username: 'maximus',
+      code: 'maximus',
       password: 'SomeHash',
       mail: 'max@mustermann.com',
     };

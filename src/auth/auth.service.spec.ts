@@ -62,7 +62,7 @@ describe('The AuthenticationService', () => {
           const userData: UserDTO = {
             firstName: 'Max',
             lastName: 'Mustermann',
-            username: 'maximus',
+            code: 'maximus',
             password: 'SomeHash',
             mail: 'max@mustermann.com',
           };

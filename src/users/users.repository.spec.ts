@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
-import { User } from 'src/users/user.entity';
+import { UserEntity } from 'src/users/user.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { createConnection, getConnection, getCustomRepository } from 'typeorm';
 import { UserEnum } from './enum/user.enum';
@@ -11,7 +11,7 @@ describe('UserRepository', () => {
       type: 'sqlite',
       database: ':memory:',
       dropSchema: true,
-      entities: [User],
+      entities: [UserEntity],
       synchronize: true,
       logging: false,
     });
@@ -24,7 +24,7 @@ describe('UserRepository', () => {
 
   async function initRepository(): Promise<UserRepository> {
     const userRepository = await getCustomRepository(UserRepository);
-    const user: User = new User({
+    const user: UserEntity = new UserEntity({
       id: 1,
       firstName: 'Joe',
       lastName: 'Smith',
@@ -92,7 +92,7 @@ describe('UserRepository', () => {
 
     test('Search multiple results', async () => {
       const userRepository = await initRepository();
-      const user_1: User = new User({
+      const user_1: UserEntity = new UserEntity({
         id: 3,
         firstName: 'John',
         lastName: 'Mustermann',
@@ -102,7 +102,7 @@ describe('UserRepository', () => {
         userType: UserEnum.ADMIN,
       });
 
-      const user_2: User = new User({
+      const user_2: UserEntity = new UserEntity({
         id: 4,
         firstName: 'Johannes',
         lastName: 'Mustermann',
@@ -112,7 +112,7 @@ describe('UserRepository', () => {
         userType: UserEnum.ADMIN,
       });
 
-      const user_3: User = new User({
+      const user_3: UserEntity = new UserEntity({
         id: 5,
         firstName: 'Johnson',
         lastName: 'Mustermann',
@@ -135,7 +135,7 @@ describe('UserRepository', () => {
 
     test('Search multiple results with Limit', async () => {
       const userRepository = await initRepository();
-      const user_1: User = new User({
+      const user_1: UserEntity = new UserEntity({
         id: 3,
         firstName: 'John',
         lastName: 'Mustermann',
@@ -145,7 +145,7 @@ describe('UserRepository', () => {
         userType: UserEnum.ADMIN,
       });
 
-      const user_2: User = new User({
+      const user_2: UserEntity = new UserEntity({
         id: 4,
         firstName: 'Johannes',
         lastName: 'Mustermann',
@@ -155,7 +155,7 @@ describe('UserRepository', () => {
         userType: UserEnum.ADMIN,
       });
 
-      const user_3: User = new User({
+      const user_3: UserEntity = new UserEntity({
         id: 5,
         firstName: 'Johnson',
         lastName: 'Mustermann',
@@ -179,7 +179,7 @@ describe('UserRepository', () => {
   describe('SaveOrUpdate', () => {
     test('Save new Item', async () => {
       const userRepository = await getCustomRepository(UserRepository);
-      const user: User = new User({
+      const user: UserEntity = new UserEntity({
         id: 0,
         firstName: 'SaveBoy',
         lastName: 'SaveBoy',
@@ -208,7 +208,7 @@ describe('UserRepository', () => {
 
     test('fail validation on save or update', async () => {
       const userRepository = await getCustomRepository(UserRepository);
-      const user: User = plainToClass(User, {
+      const user: UserEntity = plainToClass(UserEntity, {
         id: 0, //only id == 0 will insert
         firstName: '',
         lastName: '',

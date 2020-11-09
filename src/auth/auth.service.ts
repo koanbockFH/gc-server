@@ -4,7 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { RegisterUserDTO } from 'src/users/dto/register-user.dto';
 import { UserDTO } from 'src/users/dto/user.dto';
-import { User } from 'src/users/user.entity';
+import { UserEntity } from 'src/users/user.entity';
 import { AccessToken, Message } from './interfaces.interface';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AuthService {
    * Provides the JWT access token if login succeeded
    * @param user User object which gets from database
    */
-  async login(user: User): Promise<AccessToken> {
+  async login(user: UserEntity): Promise<AccessToken> {
     const payload = { userId: user.id };
     return {
       access_token: this.jwtService.sign(payload),

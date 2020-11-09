@@ -1,15 +1,15 @@
 import { validate } from 'class-validator';
 import { EntityRepository, Like, Repository } from 'typeorm';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 
-@EntityRepository(User)
-export class UserRepository extends Repository<User> {
+@EntityRepository(UserEntity)
+export class UserRepository extends Repository<UserEntity> {
   /**
    * Inserts a user if it does not provide a valid id, and updates it if it does
    * @param user user to be saved or updated
    * @throws if a id is provided but no user exists
    */
-  async saveOrUpdate(user: User): Promise<void> {
+  async saveOrUpdate(user: UserEntity): Promise<void> {
     const errors = await validate(user);
     if (errors.length > 0) {
       throw errors;
@@ -25,7 +25,7 @@ export class UserRepository extends Repository<User> {
    * @returns user found
    * @throws if no user can be found
    */
-  findByCredentials(codeOrMail: string, password: string): Promise<User> {
+  findByCredentials(codeOrMail: string, password: string): Promise<UserEntity> {
     if (codeOrMail.includes('@')) {
       return this.findOneOrFail({ mail: codeOrMail, password });
     }
@@ -38,7 +38,7 @@ export class UserRepository extends Repository<User> {
    * @param value firstName, lastName, code
    * @returns A list of Users that match the search pattern
    */
-  findBySearchArg(value: string, take = 10): Promise<User[]> {
+  findBySearchArg(value: string, take = 10): Promise<UserEntity[]> {
     return this.find({
       where: [{ firstName: Like(`%${value}%`) }, { lastName: Like(`%${value}%`) }, { code: Like(`%${value}%`) }],
       order: {

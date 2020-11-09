@@ -1,11 +1,11 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
 import { AuditEntity } from 'src/common/entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { UserEnum } from './enum/user.enum';
 
 @Entity()
-export class User extends AuditEntity {
-  constructor(defaultValues: Partial<User> = {}) {
+export class UserEntity extends AuditEntity {
+  constructor(defaultValues: Partial<UserEntity> = {}) {
     super(defaultValues);
 
     if (defaultValues == null) return;
@@ -17,8 +17,6 @@ export class User extends AuditEntity {
     this.password = defaultValues.password;
     this.userType = defaultValues.userType;
   }
-  @PrimaryGeneratedColumn()
-  id!: number;
 
   @Column()
   @IsNotEmpty()

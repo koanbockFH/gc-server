@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './users.repository';
 import * as bcrypt from 'bcryptjs';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 import { UserDTO } from './dto/user.dto';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class UsersService {
    * Fetches the user by his id from the repo
    * @param userId id of requested user
    */
-  async getUserById(userId: number): Promise<User> {
+  async getUserById(userId: number): Promise<UserEntity> {
     return await this.userRepo.findOne({ id: userId });
   }
 
@@ -20,7 +20,7 @@ export class UsersService {
    * Fetches users by a query from the repo
    * @param query search query
    */
-  async getUsersByQuery(query: string): Promise<User[]> {
+  async getUsersByQuery(query: string): Promise<UserEntity[]> {
     return await this.userRepo.findBySearchArg(query);
   }
 
@@ -30,7 +30,7 @@ export class UsersService {
    */
   async saveOrUpdate(user: UserDTO): Promise<void> {
     user.password = bcrypt.hashSync(user.password, 8);
-    const newUser = new User(user);
+    const newUser = new UserEntity(user);
 
     await this.userRepo.saveOrUpdate(newUser);
   }

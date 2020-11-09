@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getCustomRepositoryToken } from '@nestjs/typeorm';
 import { UserDTO } from './dto/user.dto';
-import { User } from './user.entity';
+import { UserEntity } from './user.entity';
 import { UserRepository } from './users.repository';
 import { UsersService } from './users.service';
 
@@ -20,14 +20,14 @@ describe('UsersService', () => {
   });
 
   test('getBySearchArg', async () => {
-    const expected = [new User()];
+    const expected = [new UserEntity()];
     jest.spyOn(repository, 'findBySearchArg').mockResolvedValueOnce(expected);
     const actual = await service.getUsersByQuery('Julian');
     expect(actual).toBe(expected);
   });
 
   test('getUserById', async () => {
-    const expected = new User();
+    const expected = new UserEntity();
     jest.spyOn(repository, 'findOne').mockResolvedValueOnce(expected);
     const actual = await service.getUserById(1);
     expect(actual).toBe(expected);
@@ -44,6 +44,6 @@ describe('UsersService', () => {
     };
     repository.saveOrUpdate = jest.fn();
     await service.saveOrUpdate(user);
-    expect(repository.saveOrUpdate).toHaveBeenCalledWith(Object.assign(new User(), user));
+    expect(repository.saveOrUpdate).toHaveBeenCalledWith(Object.assign(new UserEntity(), user));
   });
 });

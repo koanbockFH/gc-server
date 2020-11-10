@@ -39,6 +39,6 @@ export class ModuleDTO {
   @ApiProperty()
   teacher!: UserDTO;
 
-  @ApiProperty()
+  @ApiProperty({ type: () => UserDTO, isArray: true })
   students!: UserDTO[];
 }

@@ -13,7 +13,6 @@ export class ModuleDTO {
     this.name = defaultValues.name;
     this.code = defaultValues.code;
     this.description = defaultValues.description;
-    this.teacherId = defaultValues.teacherId;
     this.teacher = defaultValues.teacher;
     this.students = defaultValues.students;
   }
@@ -32,9 +31,6 @@ export class ModuleDTO {
   @ApiProperty()
   @IsNotEmpty()
   description!: string;
-
-  @ApiProperty()
-  teacherId!: number;
 
   @ApiProperty()
   teacher!: UserDTO;

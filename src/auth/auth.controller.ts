@@ -35,7 +35,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req: RequestWithUser): Promise<UserDTO> {
-    delete req.user.password;
-    return req.user;
+    return new UserDTO(req.user);
   }
 }

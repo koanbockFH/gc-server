@@ -24,7 +24,6 @@ export abstract class AuditEntity extends BaseEntity {
 
   @Column({
     type: 'int',
-    width: 11,
     nullable: true,
     default: () => null,
     transformer: {
@@ -37,7 +36,6 @@ export abstract class AuditEntity extends BaseEntity {
 
   @Column({
     type: 'int',
-    width: 11,
     nullable: true,
     default: () => null,
     transformer: {

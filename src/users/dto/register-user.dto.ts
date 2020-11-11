@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 import { UserEnum } from '../enum/user.enum';
-import { UserDTO } from './user.dto';
 
-export class RegisterUserDTO extends UserDTO {
+export class RegisterUserDTO {
   @ApiProperty()
   @IsNotEmpty()
   firstName: string;

@@ -13,35 +13,30 @@ import { ModulesService } from './modules.service';
 export class ModulesController {
   constructor(private modulesService: ModulesService) {}
 
-  @Auth()
   @ApiCommonResponse({ type: ModuleDTO })
   @Post('/')
   async create(@Request() req: RequestWithUser, @Body() module: CreateModuleDTO): Promise<ModuleDTO> {
     return await this.modulesService.create(module);
   }
 
-  @Auth()
   @ApiCommonResponse({ type: ModuleDTO })
   @Put('/')
   async edit(@Request() req: RequestWithUser, @Body() module: ModuleDTO): Promise<ModuleDTO> {
     return await this.modulesService.edit(module);
   }
 
-  @Auth()
   @ApiCommonResponse({ type: ModuleDTO })
   @Get('/:id')
   async getById(@Request() req: RequestWithUser, @Param('id') id: number): Promise<ModuleDTO> {
     return await this.modulesService.getById(id);
   }
 
-  @Auth()
   @ApiCommonResponse({ type: ModuleDTO, isArray: true })
   @Get('/')
   async getAllByUser(@Request() req: RequestWithUser): Promise<ModuleDTO[]> {
     return await this.modulesService.getAllByUser(req.user.id);
   }
 
-  @Auth()
   @Delete('/:id')
   async delete(@Request() req: RequestWithUser, @Param('id') id: number): Promise<void> {
     await this.modulesService.delete(id);

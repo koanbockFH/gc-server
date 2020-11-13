@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
+import { UserDTO } from 'src/users/dto/user.dto';
 
 export class CreateModuleDTO {
   constructor(defaultValues: Partial<CreateModuleDTO> = {}) {
@@ -11,7 +12,8 @@ export class CreateModuleDTO {
     this.name = defaultValues.name;
     this.code = defaultValues.code;
     this.description = defaultValues.description;
-    this.teacherId = defaultValues.teacherId;
+    this.teacher = defaultValues.teacher;
+    this.students = defaultValues.students;
   }
 
   @ApiProperty()
@@ -27,8 +29,8 @@ export class CreateModuleDTO {
   description!: string;
 
   @ApiProperty()
-  teacherId!: number;
+  teacher!: UserDTO;
 
-  @ApiProperty({ type: 'number', isArray: true })
-  studentIds!: number[];
+  @ApiProperty({ type: () => UserDTO, isArray: true })
+  students!: UserDTO[];
 }

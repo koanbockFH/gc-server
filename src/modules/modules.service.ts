@@ -12,12 +12,12 @@ import { ModuleRepository } from './modules.repository';
 export class ModulesService {
   constructor(private moduleRepo: ModuleRepository, private userRepository: UserRepository) {}
 
-  async create(module: CreateModuleDTO): Promise<ModuleDTO> {
+  async create(dto: CreateModuleDTO): Promise<ModuleDTO> {
     const entity = await this.moduleRepo.saveOrUpdate(
       new ModuleEntity({
-        ...module,
-        teacher: new UserEntity({ id: module.teacherId }),
-        students: module.studentIds.map(id => new UserEntity({ id })),
+        ...dto,
+        teacher: new UserEntity(dto.teacher),
+        students: dto.students.map(s => new UserEntity(s)),
       }), //User must already exist
     );
     return this.getById(entity.id);
@@ -42,6 +42,10 @@ export class ModulesService {
 
   async getById(id: number): Promise<ModuleDTO> {
     const result = await this.moduleRepo.getById(id);
+
+    if (result == null) {
+      throw new NotFoundException();
+    }
 
     return new ModuleDTO({
       ...result,

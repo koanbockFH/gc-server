@@ -43,13 +43,10 @@ export class ModulesService {
   async getById(id: number): Promise<ModuleDTO> {
     const result = await this.moduleRepo.getById(id);
 
-<<<<<<< HEAD
     if (result == null) {
       throw new NotFoundException();
     }
 
-=======
->>>>>>> master
     return new ModuleDTO({
       ...result,
       teacher: new UserDTO(result.teacher),

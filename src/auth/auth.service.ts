@@ -6,10 +6,12 @@ import { RegisterUserDTO } from 'src/users/dto/register-user.dto';
 import { UserDTO } from 'src/users/dto/user.dto';
 import { UserEntity } from 'src/users/user.entity';
 import { AccessToken, Message } from './interfaces.interface';
+import { TokenRepository } from './token/token.repository';
+import { TokenEntity } from './token/token.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(private usersService: UsersService, private jwtService: JwtService, private tokenRepo: TokenRepository) {}
 
   /**
    * Checks if user is valid and the password is correct
@@ -24,15 +26,30 @@ export class AuthService {
     return null;
   }
 
+  async validateToken(accessToken: string): Promise<boolean> {
+    const token = await this.tokenRepo.findByToken(accessToken);
+    return token ? true : false;
+  }
+
   /**
    * Provides the JWT access token if login succeeded
    * @param user User object which gets from database
    */
   async login(user: UserEntity): Promise<AccessToken> {
     const payload = { userId: user.id };
+    const accessToken = this.jwtService.sign(payload);
+    await this.tokenRepo.saveOrUpdate(new TokenEntity({ token: accessToken }));
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
     };
+  }
+
+  /**
+   * Invalidate the given jwt token
+   * @param accessToken jwt token provided by the request
+   */
+  async logout(accessToken: string): Promise<void> {
+    await this.tokenRepo.delete({ token: accessToken });
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -7,7 +7,10 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { jwtConstants } from 'src/constants';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TokenRepository } from './token/token.repository';
 
+@Global()
 @Module({
   imports: [
     UsersModule,
@@ -17,6 +20,7 @@ import { jwtConstants } from 'src/constants';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1h' },
     }),
+    TypeOrmModule.forFeature([TokenRepository]),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService],

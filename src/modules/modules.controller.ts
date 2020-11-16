@@ -28,6 +28,17 @@ export class ModulesController {
     return await this.modulesService.edit(module);
   }
 
+  @ApiCommonResponse({ type: TimeSlotDTO })
+  @Get('/timeslot/:id')
+  async getTimeSlotById(@Param('id') id: number): Promise<TimeSlotDTO> {
+    return await this.timeSlotService.getById(id);
+  }
+
+  @Delete('/timeslot/:id')
+  async deleteTimeSlot(@Param('id') id: number): Promise<void> {
+    await this.timeSlotService.delete(id);
+  }
+
   @ApiCommonResponse({ type: ModuleDTO })
   @Get('/:id')
   async getById(@Request() req: RequestWithUser, @Param('id') id: number): Promise<ModuleDTO> {
@@ -61,16 +72,5 @@ export class ModulesController {
   @Get('/:moduleId/timeslot')
   async getAllTimeSlots(@Param('moduleId') moduleId: number): Promise<TimeSlotDTO[]> {
     return await this.timeSlotService.getAll(moduleId);
-  }
-
-  @ApiCommonResponse({ type: TimeSlotDTO })
-  @Get('/:moduleId/timeslot/:id')
-  async getTimeSlotById(@Param('id') id: number): Promise<TimeSlotDTO> {
-    return await this.timeSlotService.getById(id);
-  }
-
-  @Delete('/:moduleId/timeslot/:id')
-  async deleteTimeSlot(@Param('id') id: number): Promise<void> {
-    await this.timeSlotService.delete(id);
   }
 }

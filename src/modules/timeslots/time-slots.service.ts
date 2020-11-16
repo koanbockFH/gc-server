@@ -12,7 +12,7 @@ export class TimeSlotsService {
   async create(moduleId: number, dto: CreateTimeSlotDTO): Promise<TimeSlotDTO> {
     const module = await this.moduleRepo.getById(moduleId);
     if (module == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Module not found.');
     }
     const entity = await this.timeSlotRepo.saveOrUpdate(
       new TimeSlotEntity({
@@ -20,7 +20,6 @@ export class TimeSlotsService {
         module,
       }),
     );
-    console.log(entity.id);
     return this.getById(entity.id);
   }
 

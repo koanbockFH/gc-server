@@ -25,7 +25,7 @@ export class ModulesController {
     return await this.modulesService.create(module);
   }
 
-  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
+  @UserTypes(UserEnum.ADMIN)
   @ApiCommonResponse({ type: ModuleDTO })
   @Put('/')
   async edit(@Request() req: RequestWithUser, @Body() module: ModuleDTO): Promise<ModuleDTO> {
@@ -38,7 +38,7 @@ export class ModulesController {
     return await this.timeSlotService.getById(id);
   }
 
-  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
+  @UserTypes(UserEnum.ADMIN)
   @Delete('/timeslot/:id')
   async deleteTimeSlot(@Param('id') id: number): Promise<void> {
     await this.timeSlotService.delete(id);

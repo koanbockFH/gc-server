@@ -12,7 +12,8 @@ export class UserTypeGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredUserTypes) return true;
+
+    if (!requiredUserTypes || requiredUserTypes.length == 0) return true;
     const request: RequestWithUser = context.switchToHttp().getRequest();
     const user = request.user;
     const hasUserType = () => requiredUserTypes.some(type => type == user.userType) || user.userType == 0;

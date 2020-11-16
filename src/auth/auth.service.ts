@@ -26,6 +26,10 @@ export class AuthService {
     return null;
   }
 
+  /**
+   * Check if jwt token is existing
+   * @param accessToken jwt token provided by the request
+   */
   async validateToken(accessToken: string): Promise<boolean> {
     const token = await this.tokenRepo.findByToken(accessToken);
     return token ? true : false;

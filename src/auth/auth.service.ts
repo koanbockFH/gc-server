@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
@@ -20,10 +20,13 @@ export class AuthService {
    */
   async validateUser(codeOrMail: string, password: string): Promise<UserDTO> {
     const user = await this.usersService.getUsersByQuery(codeOrMail);
-    if (user && bcrypt.compareSync(password, user[0].password)) {
-      return new UserDTO(user[0]);
+    if (user[0] === undefined) {
+      throw new UnauthorizedException('Code or mail is invalid.');
     }
-    return null;
+    if (!bcrypt.compareSync(password, user[0].password)) {
+      throw new UnauthorizedException('Password is invalid.');
+    }
+    return new UserDTO(user[0]);
   }
 
   /**

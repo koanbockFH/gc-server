@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginUserDTO } from 'src/users/dto/login-user.dto';
 import { RegisterUserDTO } from 'src/users/dto/register-user.dto';
 import { AuthService } from './auth.service';
@@ -9,6 +9,7 @@ import { RequestWithUser, AccessToken, Message } from './interfaces.interface';
 import { UserDTO } from 'src/users/dto/user.dto';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { Logout } from 'src/common/decorator/logout.decorator';
+import { Response } from 'express';
 
 @ApiTags('auth')
 @Controller('/api/v1/auth')
@@ -43,7 +44,7 @@ export class AuthController {
   @Auth()
   @Logout()
   @Get('/logout')
-  async logout(): Promise<Message> {
-    return { message: 'Successfully logged out.' };
+  async logout(@Res() res: Response): Promise<void> {
+    res.status(HttpStatus.OK).json({ message: 'Successfully logged out.' });
   }
 }

@@ -2,7 +2,7 @@
 version: '3'
 
 services:
-  vegas_database:
+  attendance_database:
     image: mysql:5
     restart: unless-stopped
     environment:

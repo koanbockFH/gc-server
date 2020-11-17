@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { RequestWithUser } from 'src/auth/interfaces.interface';
 import { Auth } from 'src/common/decorator/auth.decorator';
 import { ApiCommonResponse } from 'src/common/decorator/commonApi.decorator';
+import { UserTypes } from 'src/common/decorator/user-type.decorator';
+import { UserEnum } from 'src/users/enum/user.enum';
 import { CreateModuleDTO } from './dto/create.module.dto';
 import { ModuleDTO } from './dto/module.dto';
 import { ModulesService } from './modules.service';
@@ -16,12 +18,14 @@ import { TimeSlotsService } from './timeslots/time-slots.service';
 export class ModulesController {
   constructor(private modulesService: ModulesService, private timeSlotService: TimeSlotsService) {}
 
+  @UserTypes(UserEnum.ADMIN)
   @ApiCommonResponse({ type: ModuleDTO })
   @Post('/')
   async create(@Request() req: RequestWithUser, @Body() module: CreateModuleDTO): Promise<ModuleDTO> {
     return await this.modulesService.create(module);
   }
 
+  @UserTypes(UserEnum.ADMIN)
   @ApiCommonResponse({ type: ModuleDTO })
   @Put('/')
   async edit(@Request() req: RequestWithUser, @Body() module: ModuleDTO): Promise<ModuleDTO> {
@@ -34,6 +38,7 @@ export class ModulesController {
     return await this.timeSlotService.getById(id);
   }
 
+  @UserTypes(UserEnum.ADMIN)
   @Delete('/timeslot/:id')
   async deleteTimeSlot(@Param('id') id: number): Promise<void> {
     await this.timeSlotService.delete(id);
@@ -51,17 +56,20 @@ export class ModulesController {
     return await this.modulesService.getAllByUser(req.user.id);
   }
 
+  @UserTypes(UserEnum.ADMIN)
   @Delete('/:id')
   async delete(@Request() req: RequestWithUser, @Param('id') id: number): Promise<void> {
     await this.modulesService.delete(id);
   }
 
+  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
   @ApiCommonResponse({ type: TimeSlotDTO })
   @Post('/:moduleId/timeslot')
   async createTimeSlot(@Param('moduleId') moduleId: number, @Body() timeSlot: CreateTimeSlotDTO): Promise<TimeSlotDTO> {
     return await this.timeSlotService.create(moduleId, timeSlot);
   }
 
+  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
   @ApiCommonResponse({ type: TimeSlotDTO })
   @Put('/:moduleId/timeslot')
   async editTimeSlot(@Param('moduleId') moduleId: number, @Body() timeSlot: TimeSlotDTO): Promise<TimeSlotDTO> {

@@ -29,6 +29,15 @@ export class AuthController {
   }
 
   @ApiBody({ type: RegisterUserDTO })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this code is already registered.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this mail is already registered.',
+  })
+  @ApiResponse({ status: 201, description: 'User successfully registered.' })
   @Post('register')
   async register(@Body() registerUser: RegisterUserDTO): Promise<Message> {
     return this.authService.register(registerUser);
@@ -42,8 +51,9 @@ export class AuthController {
   }
 
   @Auth()
+  @ApiResponse({ status: 200, description: 'Successfully logged out.' })
   @Logout()
-  @Get('/logout')
+  @Post('/logout')
   async logout(@Res() res: Response): Promise<void> {
     res.status(HttpStatus.OK).json({ message: 'Successfully logged out.' });
   }

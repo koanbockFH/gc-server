@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
@@ -64,6 +64,14 @@ export class AuthService {
    * @param user User object which gets from database
    */
   async register(user: RegisterUserDTO): Promise<Message> {
+    let check = await this.usersService.getUsersByQuery(user.code);
+    if (check[0] !== undefined) {
+      throw new HttpException('User with this code is already registered.', HttpStatus.CONFLICT);
+    }
+    check = await this.usersService.getUsersByQuery(user.mail);
+    if (check[0] !== undefined) {
+      throw new HttpException('User with this mail is already registered.', HttpStatus.CONFLICT);
+    }
     await this.usersService.saveOrUpdate(user);
     return {
       message: 'The user ' + user.code + ' was created',

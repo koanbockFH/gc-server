@@ -40,7 +40,12 @@ export class UserRepository extends Repository<UserEntity> {
    */
   findBySearchArg(value: string, take = 10): Promise<UserEntity[]> {
     return this.find({
-      where: [{ firstName: Like(`%${value}%`) }, { lastName: Like(`%${value}%`) }, { code: Like(`%${value}%`) }],
+      where: [
+        { firstName: Like(`%${value}%`) },
+        { lastName: Like(`%${value}%`) },
+        { code: Like(`%${value}%`) },
+        { mail: Like(`%${value}%`) },
+      ],
       order: {
         lastName: 'ASC',
       },

@@ -25,7 +25,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       if (!isValidToken) {
         throw new UnauthorizedException();
       }
-      if (isLogout) {
+      if (isLogout[0] !== undefined && isLogout[0]) {
         await this.authService.logout(accessToken);
       }
       return this.activate(context);

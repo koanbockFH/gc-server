@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { UserDTO } from 'src/users/dto/user.dto';
 import { UserEnum } from 'src/users/enum/user.enum';
 import { UserEntity } from 'src/users/user.entity';
@@ -12,7 +12,24 @@ import { ModuleRepository } from './modules.repository';
 export class ModulesService {
   constructor(private moduleRepo: ModuleRepository, private userRepository: UserRepository) {}
 
+  async validateUserList(dto: ModuleDTO | CreateModuleDTO): Promise<void> {
+    const asyncFilter = async (arr, predicate) =>
+      Promise.all(arr.map(predicate)).then(results => arr.filter((_v, index) => results[index]));
+
+    dto.students = await asyncFilter(dto.students, async s => {
+      const student = await this.userRepository.findOne({ id: s.id, userType: 2 });
+      if (student) return s;
+    });
+    if (!(await this.userRepository.findOne({ id: dto.teacher.id, userType: 1 }))) {
+      dto.teacher = null;
+    }
+  }
+
   async create(dto: CreateModuleDTO): Promise<ModuleDTO> {
+    await this.validateUserList(dto);
+    if (dto.teacher == null) {
+      throw new HttpException('Given teacher id does not belong to a teacher.', HttpStatus.CONFLICT);
+    }
     const entity = await this.moduleRepo.saveOrUpdate(
       new ModuleEntity({
         ...dto,
@@ -28,7 +45,7 @@ export class ModulesService {
     if (module == null) {
       throw new NotFoundException();
     }
-
+    await this.validateUserList(dto);
     module.mapValues({
       ...dto,
       teacher: new UserEntity(dto.teacher),

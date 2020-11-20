@@ -4,6 +4,9 @@ import * as bcrypt from 'bcryptjs';
 import { UserEntity } from './user.entity';
 import { RegisterUserDTO } from './dto/register-user.dto';
 import { UserDTO } from './dto/user.dto';
+import { IPaginationOptions } from 'src/common/pagination/pagination.options';
+import { Pagination } from 'src/common/pagination/pagination.dto';
+import { IUserFilterOptions } from './util/userFilter.option';
 
 @Injectable()
 export class UsersService {
@@ -34,5 +37,17 @@ export class UsersService {
     newUser.password = bcrypt.hashSync(user.password, 8);
 
     await this.userRepo.saveOrUpdate(newUser);
+  }
+
+  async getAll(filter: IUserFilterOptions, pagination: IPaginationOptions): Promise<Pagination<UserDTO>> {
+    const values = await this.userRepo.paginate(filter, pagination);
+
+    const result = new Pagination(
+      values.items.map(e => new UserDTO(e)),
+      values.currentPage,
+      values.totalPages,
+    );
+
+    return result;
   }
 }

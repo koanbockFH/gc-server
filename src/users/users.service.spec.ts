@@ -49,4 +49,36 @@ describe('UsersService', () => {
     //TODO we need to adjust this test, since password is hashed it is no longer working
     expect(repository.saveOrUpdate).toHaveBeenCalledTimes(1);
   });
+
+  describe('getPublic', () => {
+    const savedValue = new UserEntity({
+      id: 1,
+      firstName: 'John',
+      lastName: 'Smith',
+      code: 'T007',
+      mail: 'user@example.com',
+      createdAt: new Date(2020, 10, 10),
+      updatedAt: new Date(2020, 10, 10),
+      userType: UserEnum.TEACHER,
+    });
+
+    test('successful get', async () => {
+      repository.paginate = jest.fn();
+      jest
+        .spyOn(repository, 'paginate')
+        .mockResolvedValueOnce({ items: [savedValue, savedValue], currentPage: 1, totalPages: 1 });
+      await expect(service.getAll({ userType: UserEnum.TEACHER }, { page: 1 })).resolves.toEqual({
+        items: [new UserDTO(savedValue), new UserDTO(savedValue)],
+        currentPage: 1,
+        totalPages: 1,
+      });
+    });
+
+    test('failed get', async () => {
+      repository.paginate = jest.fn();
+      jest.spyOn(repository, 'paginate').mockResolvedValueOnce({ items: [], currentPage: 1, totalPages: 1 });
+      const result = await service.getAll({ userType: UserEnum.TEACHER }, { page: 1 });
+      expect(result.items).toHaveLength(0);
+    });
+  });
 });

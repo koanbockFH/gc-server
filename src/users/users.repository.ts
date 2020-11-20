@@ -1,6 +1,9 @@
 import { validate } from 'class-validator';
-import { EntityRepository, Like, Repository } from 'typeorm';
+import { Pagination } from 'src/common/pagination/pagination.dto';
+import { IPaginationOptions } from 'src/common/pagination/pagination.options';
+import { EntityRepository, FindConditions, FindManyOptions, Like, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { IUserFilterOptions } from './util/userFilter.option';
 
 @EntityRepository(UserEntity)
 export class UserRepository extends Repository<UserEntity> {
@@ -52,5 +55,38 @@ export class UserRepository extends Repository<UserEntity> {
       take: take,
       cache: true,
     });
+  }
+
+  async paginate(filter: IUserFilterOptions, options: IPaginationOptions): Promise<Pagination<UserEntity>> {
+    const query: FindManyOptions<UserEntity> = {
+      order: {
+        firstName: 'ASC',
+      },
+    };
+
+    query.where = this._getQuery(filter);
+    const count = await this.count(query);
+    const total = Math.round(count / (options.take ?? count));
+    query.take = options.take;
+    query.skip = options.take && options.page ? (options.page - 1) * options.take : null;
+    const values = await this.find(query);
+
+    return new Pagination(values, options.page, total);
+  }
+
+  _getQuery(filter: IUserFilterOptions): FindConditions<UserEntity>[] {
+    const where: FindConditions<UserEntity> = {};
+    if (filter.userType) {
+      where.userType = filter.userType;
+    }
+
+    const clauses: FindConditions<UserEntity>[] = [];
+    if (filter.searchArg) {
+      clauses.push({ ...where, code: Like(`%${filter.searchArg}%`) });
+    } else {
+      clauses.push(where);
+    }
+
+    return clauses;
   }
 }

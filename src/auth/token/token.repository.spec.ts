@@ -1,7 +1,4 @@
 import { validate, ValidationError } from 'class-validator';
-import { UserEnum } from 'src/users/enum/user.enum';
-import { UserEntity } from 'src/users/user.entity';
-import { UserRepository } from 'src/users/users.repository';
 import { createConnection, getConnection, getCustomRepository } from 'typeorm';
 import { TokenEntity } from './token.entity';
 import { TokenRepository } from './token.repository';

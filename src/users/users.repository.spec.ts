@@ -236,4 +236,134 @@ describe('UserRepository', () => {
       await expect(userRepository.findByCredentials(user.code, user.password)).rejects.toThrowError();
     });
   });
+
+  describe('pagination', () => {
+    beforeEach(async () => {
+      const userRepository = getCustomRepository(UserRepository);
+      const user = new UserEntity({
+        id: 1,
+        firstName: 'John',
+        lastName: 'Smith',
+        code: 'A001',
+        userType: UserEnum.ADMIN,
+        password: 'SomeHash',
+        mail: 'user@example.com',
+      });
+
+      await userRepository.save(user);
+
+      for (let i = 1; i <= 50; i++) {
+        const student = new UserEntity({
+          firstName: i.toString(),
+          lastName: (i * 1000).toString(),
+          code: 'S00' + i.toString(),
+          userType: UserEnum.STUDENT,
+          password: 'SomeHash',
+          mail: (i * 1000).toString() + 's@example.com',
+        });
+
+        await userRepository.save(student);
+      }
+      for (let i = 1; i <= 50; i++) {
+        const teacher = new UserEntity({
+          firstName: i.toString(),
+          lastName: (i * 1000).toString(),
+          code: 'T00' + i.toString(),
+          userType: UserEnum.TEACHER,
+          password: 'SomeHash',
+          mail: (i * 1000).toString() + 't@example.com',
+        });
+
+        await userRepository.save(teacher);
+      }
+    });
+
+    test('getAll ; Pagination 0', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({}, {});
+
+      expect(result.items).toHaveLength(101);
+    });
+
+    test('getAll ; Pagination 10', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({}, { take: 10 });
+
+      expect(result.items).toHaveLength(10);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(10);
+    });
+
+    test('getAll Students ; Pagination 0', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ userType: 2 }, {});
+
+      expect(result.items).toHaveLength(50);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(1);
+    });
+
+    test('getAll Students ; Pagination 10', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ userType: 2 }, { take: 10 });
+
+      expect(result.items).toHaveLength(10);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(5);
+    });
+
+    test('getAll Teachers ; Pagination 0', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ userType: 1 }, {});
+
+      expect(result.items).toHaveLength(50);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(1);
+    });
+
+    test('getAll Teachers ; Pagination 10', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ userType: 1 }, { take: 10 });
+
+      expect(result.items).toHaveLength(10);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(5);
+    });
+
+    test('search By code for teacher ; Pagination 10', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ searchArg: 'T' }, { take: 10 });
+
+      expect(result.items).toHaveLength(10);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(5);
+    });
+
+    test('search By code for students ; Pagination 10', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ searchArg: 'S' }, { take: 10 });
+
+      expect(result.items).toHaveLength(10);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(5);
+    });
+
+    test('search By code ; Pagination 10 => no result', async () => {
+      const userRepository = getCustomRepository(UserRepository);
+
+      const result = await userRepository.paginate({ searchArg: '-101' }, { take: 10 });
+
+      expect(result.items).toHaveLength(0);
+      expect(result.currentPage).toBe(1);
+      expect(result.totalPages).toBe(0);
+    });
+  });
 });

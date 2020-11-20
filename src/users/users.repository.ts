@@ -76,13 +76,18 @@ export class UserRepository extends Repository<UserEntity> {
 
   _getQuery(filter: IUserFilterOptions): FindConditions<UserEntity>[] {
     const where: FindConditions<UserEntity> = {};
-    if (filter.userType) {
+    if (filter.userType !== undefined) {
       where.userType = filter.userType;
     }
-
-    const clauses: FindConditions<UserEntity>[] = [];
+    let clauses: FindConditions<UserEntity>[] = [];
     if (filter.searchArg) {
-      clauses.push({ ...where, code: Like(`%${filter.searchArg}%`) });
+      const or: FindConditions<UserEntity>[] = [
+        { ...where, firstName: Like(`%${filter.searchArg}%`) },
+        { ...where, lastName: Like(`%${filter.searchArg}%`) },
+        { ...where, code: Like(`%${filter.searchArg}%`) },
+        { ...where, mail: Like(`%${filter.searchArg}%`) },
+      ];
+      clauses = or;
     } else {
       clauses.push(where);
     }

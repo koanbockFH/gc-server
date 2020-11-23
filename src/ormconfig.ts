@@ -3,7 +3,7 @@ import { ConnectionOptions } from 'typeorm';
 // Check typeORM documentation for more information.
 const config: ConnectionOptions = {
   type: 'mysql',
-  host: process.env.DATABASE_HOST || 'localhost',
+  host: process.env.DATABASE_HOST || '192.168.99.100',
   port: parseInt(process.env.DATABASE_PORT) || 3306,
   username: process.env.DATABASE_USERNAME || 'root',
   password: process.env.DATABASE_PASSWORD || 'root',

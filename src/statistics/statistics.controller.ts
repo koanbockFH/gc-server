@@ -16,6 +16,15 @@ export class StatisticsController {
   async getUserStatistics(@Request() req: RequestWithUser): Promise<void> {}
 
   @ApiParam({ name: 'moduleId', type: Number })
+  @ApiParam({ name: 'timeslotId', type: Number })
+  @UserTypes(UserEnum.TEACHER)
+  @Get('/module/timeslot/:timeslotId')
+  async getTimeslotByIdStatistics(
+    @Request() req: RequestWithUser,
+    @Param('timeslotId') timeslotId: number,
+  ): Promise<void> {}
+
+  @ApiParam({ name: 'moduleId', type: Number })
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/:moduleId')
   async getModuleStatistics(@Request() req: RequestWithUser, @Param('moduleId') moduleId: number): Promise<void> {}
@@ -24,16 +33,6 @@ export class StatisticsController {
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/:moduleId/timeslot')
   async getTimeslotsStatistics(@Request() req: RequestWithUser, @Param('moduleId') moduleId: number): Promise<void> {}
-
-  @ApiParam({ name: 'moduleId', type: Number })
-  @ApiParam({ name: 'timeslotId', type: Number })
-  @UserTypes(UserEnum.TEACHER)
-  @Get('/module/:moduleId/timeslot/:timeslotId')
-  async getTimeslotByIdStatistics(
-    @Request() req: RequestWithUser,
-    @Param('moduleId') moduleId: number,
-    @Param('timeslotId') timeslotId: number,
-  ): Promise<void> {}
 
   @ApiParam({ name: 'studentId', type: Number })
   @UserTypes(UserEnum.TEACHER)

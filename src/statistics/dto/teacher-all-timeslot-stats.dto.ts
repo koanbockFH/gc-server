@@ -1,14 +1,13 @@
-export class TeacherModuleStatsDTO {
-  constructor(defaultValues: Partial<TeacherModuleStatsDTO> = {}) {
+import { TeacherTimeSlotStatsDTO } from './teacher-timeslot.stats.dto';
+
+export class TeacherAllTimeSlotsDTO {
+  constructor(defaultValues: Partial<TeacherAllTimeSlotsDTO> = {}) {
     if (defaultValues == null) return;
     this.name = defaultValues.name;
     this.code = defaultValues.code;
     this.description = defaultValues.description;
     this.teacher = defaultValues.teacher;
-    this.attended = defaultValues.attended;
-    this.absent = defaultValues.absent;
-    this.classes = defaultValues.classes;
-    this.total = defaultValues.total;
+    this.timeSlots = defaultValues.timeSlots;
   }
   name: string;
   code: string;
@@ -18,8 +17,5 @@ export class TeacherModuleStatsDTO {
     lastName: string;
     code: string;
   };
-  attended: number;
-  absent: number;
-  classes: number;
-  total: number;
+  timeSlots: TeacherTimeSlotStatsDTO[];
 }

@@ -4,9 +4,11 @@ import { ModuleRepository } from 'src/modules/modules.repository';
 import { TimeSlotRepository } from 'src/modules/timeslots/time-slots.repository';
 import { UserEntity } from 'src/users/user.entity';
 import { UserRepository } from 'src/users/users.repository';
+import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
 import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
+import { UserStatisticsDTO } from './dto/user.stats.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -17,8 +19,34 @@ export class StatisticsService {
     private readonly timeSlotRepo: TimeSlotRepository,
   ) {}
 
-  async getUserStatistics(id: number): Promise<void> {
+  async getUserStatistics(id: number): Promise<UserStatisticsDTO> {
     // wait for attendance calls endpoint
+    const modules = await this.moduleRepo.getAll();
+    const asignedModules = [];
+    const statisticModules: StudentModuleStatsDTO[] = [];
+    modules.forEach(module => {
+      if (module.students.some(s => s.id === id)) {
+        asignedModules.push(module);
+      }
+    });
+    asignedModules.forEach(async module => {
+      const studentsTotal = module.students.length;
+      const timeSlots = await this.timeSlotRepo.getAll(module.id);
+      let studentsAttended = 0;
+      timeSlots.forEach(async slot => {
+        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+      });
+      statisticModules.push(
+        new StudentModuleStatsDTO({
+          ...module,
+          classes: timeSlots.length,
+          total: studentsTotal,
+          attended: studentsAttended,
+          absent: studentsTotal - studentsAttended,
+        }),
+      );
+    });
+    return new UserStatisticsDTO({ modules: statisticModules });
   }
 
   async getModuleStatistics(userId: number, moduleId: number): Promise<TeacherModuleStatsDTO> {
@@ -91,11 +119,58 @@ export class StatisticsService {
     });
   }
 
-  async getStudentStatistics(userId: number, studentId: number): Promise<void> {
+  async getStudentStatistics(studentId: number): Promise<UserStatisticsDTO> {
     // wait for attendance calls endpoint
+    const modules = await this.moduleRepo.getAll();
+    const asignedModules = [];
+    const statisticModules: TeacherModuleStatsDTO[] = [];
+    modules.forEach(module => {
+      if (module.students.some(s => s.id === studentId)) {
+        asignedModules.push(module);
+      }
+    });
+    asignedModules.forEach(async module => {
+      const studentsTotal = module.students.length;
+      const timeSlots = await this.timeSlotRepo.getAll(module.id);
+      let studentsAttended = 0;
+      timeSlots.forEach(async slot => {
+        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+      });
+      statisticModules.push(
+        new TeacherModuleStatsDTO({
+          ...module,
+          teacher: new UserEntity(module.teacher),
+          classes: timeSlots.length,
+          total: studentsTotal,
+          attended: studentsAttended,
+          absent: studentsTotal - studentsAttended,
+        }),
+      );
+    });
+    return new UserStatisticsDTO({ modules: statisticModules });
   }
 
-  async getModulesStatistics(userId: number): Promise<void> {
+  async getModulesStatistics(): Promise<UserStatisticsDTO> {
     // wait for attendance calls endpoint
+    const modules = await this.moduleRepo.getAll();
+    const statisticModules: StudentModuleStatsDTO[] = [];
+    modules.forEach(async module => {
+      const studentsTotal = module.students.length;
+      const timeSlots = await this.timeSlotRepo.getAll(module.id);
+      let studentsAttended = 0;
+      timeSlots.forEach(async slot => {
+        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+      });
+      statisticModules.push(
+        new StudentModuleStatsDTO({
+          ...module,
+          classes: timeSlots.length,
+          total: studentsTotal,
+          attended: studentsAttended,
+          absent: studentsTotal - studentsAttended,
+        }),
+      );
+    });
+    return new UserStatisticsDTO({ modules: statisticModules });
   }
 }

@@ -8,6 +8,7 @@ import { UserEnum } from 'src/users/enum/user.enum';
 import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
+import { UserStatisticsDTO } from './dto/user.stats.dto';
 import { StatisticsService } from './statistics.service';
 
 @Auth()
@@ -18,9 +19,10 @@ export class StatisticsController {
 
   @UserTypes(UserEnum.STUDENT)
   @Get()
-  async getUserStatistics(@Request() req: RequestWithUser): Promise<void> {}
+  async getUserStatistics(@Request() req: RequestWithUser): Promise<UserStatisticsDTO> {
+    return await this.statisticsService.getUserStatistics(req.user.id);
+  }
 
-  @ApiParam({ name: 'moduleId', type: Number })
   @ApiParam({ name: 'timeslotId', type: Number })
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/timeslot/:timeslotId')
@@ -29,6 +31,13 @@ export class StatisticsController {
     @Param('timeslotId') timeslotId: number,
   ): Promise<TeacherTimeSlotStatsDTO> {
     return await this.statisticsService.getTimeslotByIdStatistics(req.user.id, timeslotId);
+  }
+
+  @ApiParam({ name: 'studentId', type: Number })
+  @UserTypes(UserEnum.TEACHER)
+  @Get('/module/student/:studentId')
+  async getStudentStatistics(@Param('studentId') studentId: number): Promise<UserStatisticsDTO> {
+    return await this.statisticsService.getStudentStatistics(studentId);
   }
 
   @ApiParam({ name: 'moduleId', type: Number })
@@ -51,12 +60,10 @@ export class StatisticsController {
     return await this.statisticsService.getTimeslotsStatistics(req.user.id, moduleId);
   }
 
-  @ApiParam({ name: 'studentId', type: Number })
-  @UserTypes(UserEnum.TEACHER)
-  @Get('/module/student/:studentId')
-  async getStudentStatistics(@Request() req: RequestWithUser, @Param('studentId') studentId: number): Promise<void> {}
-
+  @ApiParam({ name: 'moduleId', type: Number })
   @UserTypes(UserEnum.ADMIN)
   @Get('/module/:moduleId/timeslot')
-  async getModulesStatistics(@Request() req: RequestWithUser): Promise<void> {}
+  async getModulesStatistics(): Promise<UserStatisticsDTO> {
+    return await this.statisticsService.getModulesStatistics();
+  }
 }

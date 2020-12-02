@@ -5,6 +5,7 @@ import { Auth } from 'src/common/decorator/auth.decorator';
 import { UserTypes } from 'src/common/decorator/user-type.decorator';
 import { UserEnum } from 'src/users/enum/user.enum';
 import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
+import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { UserStatisticsDTO } from './dto/user.stats.dto';
@@ -35,8 +36,11 @@ export class StatisticsController {
   @ApiParam({ name: 'studentId', type: Number })
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/student/:studentId')
-  async getStudentStatistics(@Param('studentId') studentId: number): Promise<UserStatisticsDTO> {
-    return await this.statisticsService.getStudentStatistics(studentId);
+  async getStudentStatistics(
+    @Request() req: RequestWithUser,
+    @Param('studentId') studentId: number,
+  ): Promise<UserStatisticsDTO> {
+    return await this.statisticsService.getStudentStatistics(req.user, studentId);
   }
 
   @ApiParam({ name: 'moduleId', type: Number })
@@ -45,7 +49,7 @@ export class StatisticsController {
   async getModuleStatistics(
     @Request() req: RequestWithUser,
     @Param('moduleId') moduleId: number,
-  ): Promise<TeacherModuleStatsDTO> {
+  ): Promise<TeacherModuleStudentStatsDTO> {
     return await this.statisticsService.getModuleStatistics(req.user, moduleId);
   }
 

@@ -6,7 +6,9 @@ export class TeacherTimeSlotStatsDTO {
     this.attended = defaultValues.attended;
     this.absent = defaultValues.absent;
     this.total = defaultValues.total;
+    this.id = defaultValues.id;
   }
+  id: number;
   name: string;
   startDate: Date;
   endDate: Date;

@@ -9,7 +9,9 @@ import { UserEntity } from 'src/users/user.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
 import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
+import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
+import { TeacherStudentsStatsDTO } from './dto/teacher-students.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { UserStatisticsDTO } from './dto/user.stats.dto';
 
@@ -61,7 +63,7 @@ export class StatisticsService {
     return new UserStatisticsDTO({ modules: statisticModules });
   }
 
-  async getModuleStatistics(user: UserEntity, moduleId: number): Promise<TeacherModuleStatsDTO> {
+  async getModuleStatistics(user: UserEntity, moduleId: number): Promise<TeacherModuleStudentStatsDTO> {
     // wait for attendance calls endpoint
     const module = await this.moduleRepo.getById(moduleId);
     if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
@@ -69,17 +71,28 @@ export class StatisticsService {
     }
     const studentsTotal = module.students.length;
     const timeSlots = await this.timeSlotRepo.getAll(module.id);
-    let studentsAttended = 0;
-    await this.asyncForEach(timeSlots, async slot => {
-      studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+    const studentList = [];
+    await this.asyncForEach(module.students, async std => {
+      const student = await this.userRepo.findOne(std.id);
+      let studentsAttended = 0;
+      await this.asyncForEach(timeSlots, async slot => {
+        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id, studentId: std.id }))[1];
+      });
+      console.log(new UserDTO(student));
+      studentList.push(
+        new TeacherStudentsStatsDTO({
+          ...student,
+          total: studentsTotal,
+          attended: studentsAttended,
+          absent: studentsTotal - studentsAttended,
+        }),
+      );
     });
-    return new TeacherModuleStatsDTO({
+    return new TeacherModuleStudentStatsDTO({
       ...module,
       teacher: new UserDTO(module.teacher),
       classes: timeSlots.length,
-      total: studentsTotal,
-      attended: studentsAttended,
-      absent: studentsTotal - studentsAttended,
+      students: studentList,
     });
   }
 
@@ -129,13 +142,16 @@ export class StatisticsService {
     });
   }
 
-  async getStudentStatistics(studentId: number): Promise<UserStatisticsDTO> {
+  async getStudentStatistics(user: UserEntity, studentId: number): Promise<UserStatisticsDTO> {
     // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: TeacherModuleStatsDTO[] = [];
     modules.forEach(module => {
-      if (module.students.some(s => s.id == studentId)) {
+      if (
+        (module.teacherId == user.id || user.userType == UserEnum.ADMIN) &&
+        module.students.some(s => s.id == studentId)
+      ) {
         asignedModules.push(module);
       }
     });

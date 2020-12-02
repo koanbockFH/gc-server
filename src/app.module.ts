@@ -7,9 +7,17 @@ import { ModulesModule } from './modules/modules.module';
 import * as ormconfig from './ormconfig';
 import { UsersModule } from './users/users.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, ModulesModule, TypeOrmModule.forRoot(ormconfig), AttendanceModule],
+  imports: [
+    AuthModule,
+    UsersModule,
+    ModulesModule,
+    TypeOrmModule.forRoot(ormconfig),
+    AttendanceModule,
+    StatisticsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AttendanceRepository } from 'src/attendance/attendance.repository';
+import { RequestWithUser } from 'src/auth/interfaces.interface';
 import { ModuleRepository } from 'src/modules/modules.repository';
 import { TimeSlotRepository } from 'src/modules/timeslots/time-slots.repository';
+import { UserDTO } from 'src/users/dto/user.dto';
+import { UserEnum } from 'src/users/enum/user.enum';
 import { UserEntity } from 'src/users/user.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
@@ -19,21 +22,30 @@ export class StatisticsService {
     private readonly timeSlotRepo: TimeSlotRepository,
   ) {}
 
+  asyncForEach = async (
+    arr: Array<any>,
+    callback: (element: any, idx: number, arr: Array<any>) => any,
+  ): Promise<void> => {
+    for (let index = 0; index < arr.length; index++) {
+      await callback(arr[index], index, arr);
+    }
+  };
+
   async getUserStatistics(id: number): Promise<UserStatisticsDTO> {
     // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: StudentModuleStatsDTO[] = [];
     modules.forEach(module => {
-      if (module.students.some(s => s.id === id)) {
+      if (module.students.some(s => s.id == id)) {
         asignedModules.push(module);
       }
     });
-    asignedModules.forEach(async module => {
+    await this.asyncForEach(asignedModules, async module => {
       const studentsTotal = module.students.length;
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
       let studentsAttended = 0;
-      timeSlots.forEach(async slot => {
+      await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
       statisticModules.push(
@@ -49,21 +61,21 @@ export class StatisticsService {
     return new UserStatisticsDTO({ modules: statisticModules });
   }
 
-  async getModuleStatistics(userId: number, moduleId: number): Promise<TeacherModuleStatsDTO> {
+  async getModuleStatistics(user: UserEntity, moduleId: number): Promise<TeacherModuleStatsDTO> {
     // wait for attendance calls endpoint
     const module = await this.moduleRepo.getById(moduleId);
-    if (module.teacherId != userId) {
+    if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
       throw new NotFoundException('There was no teaching module found.');
     }
     const studentsTotal = module.students.length;
     const timeSlots = await this.timeSlotRepo.getAll(module.id);
     let studentsAttended = 0;
-    timeSlots.forEach(async slot => {
+    await this.asyncForEach(timeSlots, async slot => {
       studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
     });
     return new TeacherModuleStatsDTO({
       ...module,
-      teacher: new UserEntity(module.teacher),
+      teacher: new UserDTO(module.teacher),
       classes: timeSlots.length,
       total: studentsTotal,
       attended: studentsAttended,
@@ -71,46 +83,44 @@ export class StatisticsService {
     });
   }
 
-  async getTimeslotsStatistics(userId: number, moduleId: number): Promise<TeacherAllTimeSlotsDTO> {
+  async getTimeslotsStatistics(user: UserEntity, moduleId: number): Promise<TeacherAllTimeSlotsDTO> {
     // wait for attendance calls endpoint
     const module = await this.moduleRepo.getById(moduleId);
-    if (module.teacherId != userId) {
+    if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
       throw new NotFoundException('There was no teaching module found.');
     }
     const studentsTotal = module.students.length;
     const timeSlots = await this.timeSlotRepo.getAll(module.id);
     const timeSlotStats = [];
-    timeSlots.forEach(async slot => {
+    await this.asyncForEach(timeSlots, async slot => {
       const studentsAttended = (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
-      timeSlotStats.push({
-        ...slot,
-        attended: studentsAttended,
-        absent: studentsTotal - studentsAttended,
-        total: studentsTotal,
-      });
+      timeSlotStats.push(
+        new TeacherTimeSlotStatsDTO({
+          ...slot,
+          attended: studentsAttended,
+          absent: studentsTotal - studentsAttended,
+          total: studentsTotal,
+        }),
+      );
     });
     return new TeacherAllTimeSlotsDTO({
       ...module,
-      teacher: new UserEntity(module.teacher),
+      teacher: new UserDTO(module.teacher),
       timeSlots: timeSlotStats,
     });
   }
 
-  async getTimeslotByIdStatistics(userId: number, timeslotId: number): Promise<TeacherTimeSlotStatsDTO> {
+  async getTimeslotByIdStatistics(user: UserEntity, timeslotId: number): Promise<TeacherTimeSlotStatsDTO> {
     // wait for attendance calls endpoint
     const timeSlot = await this.timeSlotRepo.getById(timeslotId);
-    let module = null;
-    if (
-      !timeSlot ||
-      !(module = await this.moduleRepo.findOne({
-        where: { moduleId: timeSlot.moduleId, teacherId: userId },
-        relations: ['teacher', 'students'],
-      }))
-    ) {
+    if (!timeSlot || (timeSlot.module.teacherId != user.id && user.userType != UserEnum.ADMIN)) {
       throw new NotFoundException('There was no timeslot found.');
     }
+    const module = await this.moduleRepo.getById(timeSlot.moduleId);
     const studentsAttended = (await this.attendanceRepo.findAndCount({ timeslotId: timeSlot.id }))[1];
     const studentsTotal = module.students.length;
+    delete timeSlot.module;
+    delete timeSlot.moduleId;
     return new TeacherTimeSlotStatsDTO({
       ...timeSlot,
       total: studentsTotal,
@@ -125,21 +135,21 @@ export class StatisticsService {
     const asignedModules = [];
     const statisticModules: TeacherModuleStatsDTO[] = [];
     modules.forEach(module => {
-      if (module.students.some(s => s.id === studentId)) {
+      if (module.students.some(s => s.id == studentId)) {
         asignedModules.push(module);
       }
     });
-    asignedModules.forEach(async module => {
+    await this.asyncForEach(asignedModules, async module => {
       const studentsTotal = module.students.length;
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
       let studentsAttended = 0;
-      timeSlots.forEach(async slot => {
+      await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
       statisticModules.push(
         new TeacherModuleStatsDTO({
           ...module,
-          teacher: new UserEntity(module.teacher),
+          teacher: new UserDTO(module.teacher),
           classes: timeSlots.length,
           total: studentsTotal,
           attended: studentsAttended,
@@ -154,13 +164,14 @@ export class StatisticsService {
     // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const statisticModules: StudentModuleStatsDTO[] = [];
-    modules.forEach(async module => {
+    await this.asyncForEach(modules, async module => {
       const studentsTotal = module.students.length;
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
       let studentsAttended = 0;
-      timeSlots.forEach(async slot => {
+      await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
+
       statisticModules.push(
         new StudentModuleStatsDTO({
           ...module,

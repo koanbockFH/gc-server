@@ -8,7 +8,9 @@ export class StudentModuleStatsDTO {
     this.absent = defaultValues.absent;
     this.classes = defaultValues.classes;
     this.total = defaultValues.total;
+    this.id = defaultValues.id;
   }
+  id: number;
   name: string;
   code: string;
   description: string;

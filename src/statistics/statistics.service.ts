@@ -78,7 +78,6 @@ export class StatisticsService {
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id, studentId: std.id }))[1];
       });
-      console.log(new UserDTO(student));
       studentList.push(
         new TeacherStudentsStatsDTO({
           ...student,

@@ -6,7 +6,6 @@ import { UserTypes } from 'src/common/decorator/user-type.decorator';
 import { UserEnum } from 'src/users/enum/user.enum';
 import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
-import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { UserStatisticsDTO } from './dto/user.stats.dto';
 import { StatisticsService } from './statistics.service';

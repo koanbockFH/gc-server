@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AttendanceRepository } from 'src/attendance/attendance.repository';
-import { RequestWithUser } from 'src/auth/interfaces.interface';
 import { ModuleRepository } from 'src/modules/modules.repository';
 import { TimeSlotRepository } from 'src/modules/timeslots/time-slots.repository';
 import { UserDTO } from 'src/users/dto/user.dto';

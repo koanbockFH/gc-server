@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { UserDTO } from 'src/users/dto/user.dto';
 import { TeacherTimeSlotStatsDTO } from './teacher-timeslot.stats.dto';
 
 export class TeacherAllTimeSlotsDTO {
@@ -9,13 +11,14 @@ export class TeacherAllTimeSlotsDTO {
     this.teacher = defaultValues.teacher;
     this.timeSlots = defaultValues.timeSlots;
   }
+  @ApiProperty()
   name: string;
+  @ApiProperty()
   code: string;
+  @ApiProperty()
   description: string;
-  teacher: {
-    firstName: string;
-    lastName: string;
-    code: string;
-  };
+  @ApiProperty()
+  teacher: UserDTO;
+  @ApiProperty({ type: TeacherTimeSlotStatsDTO, isArray: true })
   timeSlots: TeacherTimeSlotStatsDTO[];
 }

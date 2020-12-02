@@ -1,21 +1,21 @@
-export class StudentModuleStatsDTO {
+import { ApiProperty } from '@nestjs/swagger';
+import { ClassStatsDTO } from './class-stats.dto';
+
+export class StudentModuleStatsDTO extends ClassStatsDTO {
   constructor(defaultValues: Partial<StudentModuleStatsDTO> = {}) {
     if (defaultValues == null) return;
+    super(defaultValues);
     this.name = defaultValues.name;
     this.code = defaultValues.code;
     this.description = defaultValues.description;
-    this.attended = defaultValues.attended;
-    this.absent = defaultValues.absent;
-    this.classes = defaultValues.classes;
-    this.total = defaultValues.total;
     this.id = defaultValues.id;
   }
+  @ApiProperty()
   id: number;
+  @ApiProperty()
   name: string;
+  @ApiProperty()
   code: string;
+  @ApiProperty()
   description: string;
-  attended: number;
-  absent: number;
-  classes: number;
-  total: number;
 }

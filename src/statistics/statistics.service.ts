@@ -34,7 +34,6 @@ export class StatisticsService {
   };
 
   async getUserStatistics(id: number): Promise<UserStatisticsDTO> {
-    // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: StudentModuleStatsDTO[] = [];
@@ -64,7 +63,6 @@ export class StatisticsService {
   }
 
   async getModuleStatistics(user: UserEntity, moduleId: number): Promise<TeacherModuleStudentStatsDTO> {
-    // wait for attendance calls endpoint
     const module = await this.moduleRepo.getById(moduleId);
     if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
       throw new NotFoundException('There was no teaching module found.');
@@ -96,7 +94,6 @@ export class StatisticsService {
   }
 
   async getTimeslotsStatistics(user: UserEntity, moduleId: number): Promise<TeacherAllTimeSlotsDTO> {
-    // wait for attendance calls endpoint
     const module = await this.moduleRepo.getById(moduleId);
     if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
       throw new NotFoundException('There was no teaching module found.');
@@ -123,7 +120,6 @@ export class StatisticsService {
   }
 
   async getTimeslotByIdStatistics(user: UserEntity, timeslotId: number): Promise<TeacherTimeSlotStatsDTO> {
-    // wait for attendance calls endpoint
     const timeSlot = await this.timeSlotRepo.getById(timeslotId);
     if (!timeSlot || (timeSlot.module.teacherId != user.id && user.userType != UserEnum.ADMIN)) {
       throw new NotFoundException('There was no timeslot found.');
@@ -142,7 +138,6 @@ export class StatisticsService {
   }
 
   async getStudentStatistics(user: UserEntity, studentId: number): Promise<UserStatisticsDTO> {
-    // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: TeacherModuleStatsDTO[] = [];
@@ -176,7 +171,6 @@ export class StatisticsService {
   }
 
   async getModulesStatistics(): Promise<UserStatisticsDTO> {
-    // wait for attendance calls endpoint
     const modules = await this.moduleRepo.getAll();
     const statisticModules: StudentModuleStatsDTO[] = [];
     await this.asyncForEach(modules, async module => {

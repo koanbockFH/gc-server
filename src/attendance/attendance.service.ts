@@ -20,7 +20,7 @@ export class AttendanceService {
     }
     const module = await this.moduleRepo.getById(timeSlot.moduleId);
     if (!module.students.some(std => std.id == studentId)) {
-      throw new HttpException('Student is not allowed to attend.', HttpStatus.FORBIDDEN);
+      throw new HttpException('Student is not allowed to attend.', HttpStatus.CONFLICT);
     }
     await this.attendanceRepo.saveOrUpdate(entity);
   }

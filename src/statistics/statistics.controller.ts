@@ -10,6 +10,7 @@ import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { StatisticsService } from './statistics.service';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
+import { TimeSlotAAStatsDTO } from './dto/timeslot-aa.stats.dto';
 
 @Auth()
 @ApiTags('statistics')
@@ -66,6 +67,19 @@ export class StatisticsController {
     @Param('moduleId') moduleId: number,
   ): Promise<TeacherTimeSlotStatsDTO[]> {
     return await this.statisticsService.getTimeslotsStatistics(req.user, moduleId);
+  }
+
+  @ApiCommonResponse({ type: TimeSlotAAStatsDTO })
+  @ApiParam({ name: 'moduleId', type: Number })
+  @ApiParam({ name: 'studentId', type: Number })
+  @UserTypes(UserEnum.TEACHER)
+  @Get('/module/:moduleId/student/:studentId')
+  async getTimeSlotsAAA(
+    @Request() req: RequestWithUser,
+    @Param('moduleId') moduleId: number,
+    @Param('studentId') studentId: number,
+  ): Promise<TimeSlotAAStatsDTO> {
+    return await this.statisticsService.getTimeSlotsAAA(req.user, moduleId, studentId);
   }
 
   @ApiCommonResponse({ type: TeacherModuleStatsDTO, isArray: true })

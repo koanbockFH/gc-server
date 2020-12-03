@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserDTO } from 'src/users/dto/user.dto';
 import { StatsDTO } from './stats.dto';
 
 export class TeacherTimeSlotStatsDTO extends StatsDTO {
@@ -9,6 +10,8 @@ export class TeacherTimeSlotStatsDTO extends StatsDTO {
     this.startDate = defaultValues.startDate;
     this.endDate = defaultValues.endDate;
     this.id = defaultValues.id;
+    this.attendees = defaultValues.attendees;
+    this.absentees = defaultValues.absentees;
   }
   @ApiProperty()
   id: number;
@@ -18,4 +21,8 @@ export class TeacherTimeSlotStatsDTO extends StatsDTO {
   startDate: Date;
   @ApiProperty()
   endDate: Date;
+  @ApiProperty({ type: UserDTO, isArray: true })
+  attendees: UserDTO[];
+  @ApiProperty({ type: UserDTO, isArray: true })
+  absentees: UserDTO[];
 }

@@ -82,17 +82,17 @@ export class StatisticsService {
     });
     await this.asyncForEach(module.students, async std => {
       const student = await this.userRepo.findOne(std.id);
-      let studentsAttended = 0;
+      let attendedSlots = 0;
       await this.asyncForEach(timeSlots, async slot => {
-        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id, studentId: std.id }))[1];
+        attendedSlots += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id, studentId: std.id }))[1];
       });
-      studentsAttendedTotal += studentsAttended;
+      studentsAttendedTotal += attendedSlots;
       studentList.push(
         new TeacherStudentsStatsDTO({
           ...student,
           totalTimeslots,
-          attended: studentsAttended,
-          absent: totalTimeslots - studentsAttended,
+          attended: attendedSlots,
+          absent: totalTimeslots - attendedSlots,
         }),
       );
     });
@@ -161,9 +161,9 @@ export class StatisticsService {
     });
     await this.asyncForEach(asignedModules, async module => {
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
-      let studentsAttended = 0;
+      let attendedSlots = 0;
       await this.asyncForEach(timeSlots, async slot => {
-        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+        attendedSlots += (await this.attendanceRepo.findAndCount({ studentId, timeslotId: slot.id }))[1];
       });
       let totalTimeslots = 0;
       timeSlots.forEach(slot => {
@@ -176,8 +176,8 @@ export class StatisticsService {
           ...module,
           teacher: new UserDTO(module.teacher),
           totalTimeslots,
-          attended: studentsAttended,
-          absent: totalTimeslots - studentsAttended,
+          attended: attendedSlots,
+          absent: totalTimeslots - attendedSlots,
         }),
       );
     });

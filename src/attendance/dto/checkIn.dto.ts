@@ -8,13 +8,13 @@ export class CheckInDTO {
 
   mapValues(defaultValues: Partial<CheckInDTO> = {}): void {
     if (defaultValues == null) return;
-    this.studentId = defaultValues.studentId;
+    this.studentCode = defaultValues.studentCode;
     this.timeslotId = defaultValues.timeslotId;
   }
 
   @ApiProperty()
   @IsNotEmpty()
-  studentId!: number;
+  studentCode!: string;
 
   @ApiProperty()
   @IsNotEmpty()

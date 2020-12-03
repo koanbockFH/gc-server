@@ -9,8 +9,8 @@ import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { StatisticsService } from './statistics.service';
-import { StudentModulesStatisticsDTO } from './dto/student-modules.stats.dto';
-import { TeacherModulesStatisticsDTO } from './dto/teacher-modules.stats.dto';
+import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
+import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
 
 @Auth()
 @ApiTags('statistics')
@@ -18,10 +18,10 @@ import { TeacherModulesStatisticsDTO } from './dto/teacher-modules.stats.dto';
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}
 
-  @ApiCommonResponse({ type: StudentModulesStatisticsDTO })
+  @ApiCommonResponse({ type: StudentModuleStatsDTO, isArray: true })
   @UserTypes(UserEnum.STUDENT)
   @Get()
-  async getUserStatistics(@Request() req: RequestWithUser): Promise<StudentModulesStatisticsDTO> {
+  async getUserStatistics(@Request() req: RequestWithUser): Promise<StudentModuleStatsDTO[]> {
     return await this.statisticsService.getUserStatistics(req.user.id);
   }
 
@@ -36,14 +36,14 @@ export class StatisticsController {
     return await this.statisticsService.getTimeslotByIdStatistics(req.user, timeslotId);
   }
 
-  @ApiCommonResponse({ type: TeacherModulesStatisticsDTO })
+  @ApiCommonResponse({ type: TeacherModuleStatsDTO, isArray: true })
   @ApiParam({ name: 'studentId', type: Number })
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/student/:studentId')
   async getStudentStatistics(
     @Request() req: RequestWithUser,
     @Param('studentId') studentId: number,
-  ): Promise<TeacherModulesStatisticsDTO> {
+  ): Promise<TeacherModuleStatsDTO[]> {
     return await this.statisticsService.getStudentStatistics(req.user, studentId);
   }
 
@@ -69,10 +69,10 @@ export class StatisticsController {
     return await this.statisticsService.getTimeslotsStatistics(req.user, moduleId);
   }
 
-  @ApiCommonResponse({ type: StudentModulesStatisticsDTO })
+  @ApiCommonResponse({ type: TeacherModuleStatsDTO, isArray: true })
   @UserTypes(UserEnum.ADMIN)
   @Get('/module')
-  async getModulesStatistics(): Promise<StudentModulesStatisticsDTO> {
+  async getModulesStatistics(): Promise<TeacherModuleStatsDTO[]> {
     return await this.statisticsService.getModulesStatistics();
   }
 }

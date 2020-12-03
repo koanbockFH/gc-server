@@ -7,15 +7,15 @@ export class TeacherStudentsStatsDTO extends UserDTO {
     super(defaultValues);
     this.attended = defaultValues.attended;
     this.absent = defaultValues.absent;
-    this.classes = defaultValues.classes;
-    this.total = defaultValues.total;
+    this.totalTimeslots = defaultValues.totalTimeslots;
+    this.totalStudents = defaultValues.totalStudents;
   }
   @ApiProperty()
   attended: number;
   @ApiProperty()
   absent: number;
   @ApiProperty()
-  classes: number;
+  totalTimeslots: number;
   @ApiProperty()
-  total: number;
+  totalStudents: number;
 }

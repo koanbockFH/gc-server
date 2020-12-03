@@ -80,7 +80,7 @@ export class StatisticsService {
       studentList.push(
         new TeacherStudentsStatsDTO({
           ...student,
-          total: total,
+          totalTimeslots: total,
           attended: studentsAttended,
           absent: total - studentsAttended,
         }),
@@ -89,9 +89,9 @@ export class StatisticsService {
     return new TeacherModuleStudentStatsDTO({
       ...module,
       teacher: new UserDTO(module.teacher),
-      classes: timeSlots.length,
+      totalTimeslots: timeSlots.length,
       students: studentList,
-      total: studentsTotal,
+      totalStudents: studentsTotal,
       attended: studentsAttendedTotal,
       absent: studentsTotal - studentsAttendedTotal,
     });
@@ -112,7 +112,7 @@ export class StatisticsService {
           ...slot,
           attended: studentsAttended,
           absent: studentsTotal - studentsAttended,
-          total: studentsTotal,
+          totalStudents: studentsTotal,
         }),
       );
     });
@@ -135,7 +135,7 @@ export class StatisticsService {
     delete timeSlot.moduleId;
     return new TeacherTimeSlotStatsDTO({
       ...timeSlot,
-      total: studentsTotal,
+      totalStudents: studentsTotal,
       attended: studentsAttended,
       absent: studentsTotal - studentsAttended,
     });
@@ -154,20 +154,19 @@ export class StatisticsService {
       }
     });
     await this.asyncForEach(asignedModules, async module => {
-      const studentsTotal = module.students.length;
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
       let studentsAttended = 0;
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
+      const totalTimeslots = timeSlots.length;
       statisticModules.push(
         new TeacherModuleStatsDTO({
           ...module,
           teacher: new UserDTO(module.teacher),
-          classes: timeSlots.length,
-          total: studentsTotal,
+          totalTimeslots,
           attended: studentsAttended,
-          absent: studentsTotal - studentsAttended,
+          absent: totalTimeslots - studentsAttended,
         }),
       );
     });
@@ -189,8 +188,8 @@ export class StatisticsService {
         new TeacherModuleStatsDTO({
           ...module,
           teacher: new UserDTO(module.teacher),
-          classes: timeSlots.length,
-          total: studentsTotal,
+          totalTimeslots: timeSlots.length,
+          totalStudents: studentsTotal,
           attended: studentsAttended,
           absent: studentsTotal - studentsAttended,
         }),

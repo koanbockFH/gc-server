@@ -8,9 +8,6 @@ export class TeacherTimeSlotStatsDTO extends StatsDTO {
     this.name = defaultValues.name;
     this.startDate = defaultValues.startDate;
     this.endDate = defaultValues.endDate;
-    this.attended = defaultValues.attended;
-    this.absent = defaultValues.absent;
-    this.total = defaultValues.total;
     this.id = defaultValues.id;
   }
   @ApiProperty()

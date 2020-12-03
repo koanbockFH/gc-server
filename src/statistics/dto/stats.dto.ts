@@ -5,12 +5,12 @@ export class StatsDTO {
     if (defaultValues == null) return;
     this.attended = defaultValues.attended;
     this.absent = defaultValues.absent;
-    this.total = defaultValues.total;
+    this.totalStudents = defaultValues.totalStudents;
   }
   @ApiProperty()
   attended: number;
   @ApiProperty()
   absent: number;
   @ApiProperty()
-  total: number;
+  totalStudents: number;
 }

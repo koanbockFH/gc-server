@@ -5,8 +5,8 @@ export class ClassStatsDTO extends StatsDTO {
   constructor(defaultValues: Partial<ClassStatsDTO> = {}) {
     if (defaultValues == null) return;
     super(defaultValues);
-    this.classes = defaultValues.classes;
+    this.totalTimeslots = defaultValues.totalTimeslots;
   }
   @ApiProperty()
-  classes: number;
+  totalTimeslots: number;
 }

@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { UserEnum } from 'src/users/enum/user.enum';
+import { UserEntity } from 'src/users/user.entity';
 import { ModuleRepository } from '../modules.repository';
 import { CreateTimeSlotDTO } from './dto/create.time-slots.dto';
 import { TimeSlotDTO } from './dto/time-slots.dto';
@@ -54,8 +56,18 @@ export class TimeSlotsService {
     });
   }
 
-  async delete(id: number): Promise<void> {
-    await this.timeSlotRepo.delete(id);
+  async delete(user: UserEntity, id: number): Promise<void> {
+    if (user.userType == UserEnum.ADMIN) {
+      await this.timeSlotRepo.delete(id);
+    } else {
+      const modules = await this.moduleRepo.getAllByTeacher(user.id);
+      const timeSlot = await this.timeSlotRepo.getById(id);
+      if (modules.some(m => timeSlot.moduleId == m.id)) {
+        await this.timeSlotRepo.delete(id);
+      } else {
+        throw new NotFoundException('TimeSlot not found.');
+      }
+    }
   }
 
   async getAll(moduleId: number): Promise<TimeSlotDTO[]> {

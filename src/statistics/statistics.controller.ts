@@ -21,8 +21,8 @@ export class StatisticsController {
   @ApiCommonResponse({ type: StudentModuleStatsDTO, isArray: true })
   @UserTypes(UserEnum.STUDENT)
   @Get()
-  async getUserStatistics(@Request() req: RequestWithUser): Promise<StudentModuleStatsDTO[]> {
-    return await this.statisticsService.getUserStatistics(req.user.id);
+  async getStatistics(@Request() req: RequestWithUser): Promise<StudentModuleStatsDTO[]> {
+    return await this.statisticsService.getStatistics(req.user);
   }
 
   @ApiCommonResponse({ type: TeacherTimeSlotStatsDTO })
@@ -80,12 +80,5 @@ export class StatisticsController {
     @Param('studentId') studentId: number,
   ): Promise<TimeSlotAAStatsDTO> {
     return await this.statisticsService.getTimeSlotsAAA(req.user, moduleId, studentId);
-  }
-
-  @ApiCommonResponse({ type: TeacherModuleStatsDTO, isArray: true })
-  @UserTypes(UserEnum.ADMIN)
-  @Get('/module')
-  async getModulesStatistics(): Promise<TeacherModuleStatsDTO[]> {
-    return await this.statisticsService.getModulesStatistics();
   }
 }

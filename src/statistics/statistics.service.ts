@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { check } from 'prettier';
 import { AttendanceRepository } from 'src/attendance/attendance.repository';
 import { ModuleRepository } from 'src/modules/modules.repository';
 import { TimeSlotDTO } from 'src/modules/timeslots/dto/time-slots.dto';
@@ -33,37 +32,39 @@ export class StatisticsService {
     }
   };
 
-  async getUserStatistics(id: number): Promise<StudentModuleStatsDTO[]> {
+  async getStatistics(user: UserEntity): Promise<StudentModuleStatsDTO[]> {
     const modules = await this.moduleRepo.getAll();
-    const asignedModules = [];
     const statisticModules: StudentModuleStatsDTO[] = [];
-    modules.forEach(module => {
-      if (module.students.some(s => s.id == id)) {
-        asignedModules.push(module);
+    await this.asyncForEach(modules, async module => {
+      if (module.students.some(s => s.id == user.id) || user.userType == UserEnum.ADMIN) {
+        const studentsTotal = module.students.length;
+        const timeSlots = await this.timeSlotRepo.getAll(module.id);
+        let studentsAttended = 0;
+        await this.asyncForEach(timeSlots, async slot => {
+          if (user.userType == UserEnum.ADMIN) {
+            studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
+          } else {
+            studentsAttended += (
+              await this.attendanceRepo.findAndCount({ studentId: user.id, timeslotId: slot.id })
+            )[1];
+          }
+        });
+        let totalTimeslots = 0;
+        timeSlots.forEach(slot => {
+          if (slot.endDate.getTime() <= new Date().getTime()) {
+            totalTimeslots++;
+          }
+        });
+        statisticModules.push(
+          new StudentModuleStatsDTO({
+            ...module,
+            totalTimeslots,
+            totalStudents: studentsTotal,
+            attended: studentsAttended,
+            absent: studentsTotal - studentsAttended,
+          }),
+        );
       }
-    });
-    await this.asyncForEach(asignedModules, async module => {
-      const studentsTotal = module.students.length;
-      const timeSlots = await this.timeSlotRepo.getAll(module.id);
-      let studentsAttended = 0;
-      await this.asyncForEach(timeSlots, async slot => {
-        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
-      });
-      let totalTimeslots = 0;
-      timeSlots.forEach(slot => {
-        if (slot.endDate.getTime() <= new Date().getTime()) {
-          totalTimeslots++;
-        }
-      });
-      statisticModules.push(
-        new StudentModuleStatsDTO({
-          ...module,
-          totalTimeslots,
-          totalStudents: studentsTotal,
-          attended: studentsAttended,
-          absent: studentsTotal - studentsAttended,
-        }),
-      );
     });
     return statisticModules;
   }
@@ -219,36 +220,6 @@ export class StatisticsService {
           totalTimeslots,
           attended: attendedSlots,
           absent: totalTimeslots - attendedSlots,
-        }),
-      );
-    });
-    return statisticModules;
-  }
-
-  async getModulesStatistics(): Promise<TeacherModuleStatsDTO[]> {
-    const modules = await this.moduleRepo.getAll();
-    const statisticModules: TeacherModuleStatsDTO[] = [];
-    await this.asyncForEach(modules, async module => {
-      const studentsTotal = module.students.length;
-      const timeSlots = await this.timeSlotRepo.getAll(module.id);
-      let studentsAttended = 0;
-      await this.asyncForEach(timeSlots, async slot => {
-        studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
-      });
-      let totalTimeslots = 0;
-      timeSlots.forEach(slot => {
-        if (slot.endDate.getTime() <= new Date().getTime()) {
-          totalTimeslots++;
-        }
-      });
-      statisticModules.push(
-        new TeacherModuleStatsDTO({
-          ...module,
-          teacher: new UserDTO(module.teacher),
-          totalTimeslots,
-          totalStudents: studentsTotal,
-          attended: studentsAttended,
-          absent: studentsTotal - studentsAttended,
         }),
       );
     });

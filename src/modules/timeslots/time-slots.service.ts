@@ -62,7 +62,7 @@ export class TimeSlotsService {
     } else {
       const modules = await this.moduleRepo.getAllByTeacher(user.id);
       const timeSlot = await this.timeSlotRepo.getById(id);
-      if (modules.some(m => timeSlot.moduleId == m.id)) {
+      if (timeSlot != null && modules.some(m => timeSlot.moduleId == m.id)) {
         await this.timeSlotRepo.delete(id);
       } else {
         throw new NotFoundException('TimeSlot not found.');

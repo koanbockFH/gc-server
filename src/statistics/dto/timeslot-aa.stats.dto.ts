@@ -5,11 +5,11 @@ export class TimeSlotAAStatsDTO {
   constructor(defaultValues: Partial<TimeSlotAAStatsDTO> = {}) {
     if (defaultValues == null) return;
     this.attended = defaultValues.attended;
-    this.absented = defaultValues.absented;
+    this.absent = defaultValues.absent;
   }
 
   @ApiProperty({ type: TimeSlotDTO, isArray: true })
   attended: TimeSlotDTO[];
   @ApiProperty({ type: TimeSlotDTO, isArray: true })
-  absented: TimeSlotDTO[];
+  absent: TimeSlotDTO[];
 }

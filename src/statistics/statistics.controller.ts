@@ -5,7 +5,6 @@ import { Auth } from 'src/common/decorator/auth.decorator';
 import { ApiCommonResponse } from 'src/common/decorator/commonApi.decorator';
 import { UserTypes } from 'src/common/decorator/user-type.decorator';
 import { UserEnum } from 'src/users/enum/user.enum';
-import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
 import { StatisticsService } from './statistics.service';
@@ -58,14 +57,14 @@ export class StatisticsController {
     return await this.statisticsService.getModuleStatistics(req.user, moduleId);
   }
 
-  @ApiCommonResponse({ type: TeacherAllTimeSlotsDTO })
+  @ApiCommonResponse({ type: TeacherTimeSlotStatsDTO, isArray: true })
   @ApiParam({ name: 'moduleId', type: Number })
   @UserTypes(UserEnum.TEACHER)
   @Get('/module/:moduleId/timeslot')
   async getTimeslotsStatistics(
     @Request() req: RequestWithUser,
     @Param('moduleId') moduleId: number,
-  ): Promise<TeacherAllTimeSlotsDTO> {
+  ): Promise<TeacherTimeSlotStatsDTO[]> {
     return await this.statisticsService.getTimeslotsStatistics(req.user, moduleId);
   }
 

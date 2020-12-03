@@ -7,7 +7,6 @@ import { UserEnum } from 'src/users/enum/user.enum';
 import { UserEntity } from 'src/users/user.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { StudentModuleStatsDTO } from './dto/student-module.stats.dto';
-import { TeacherAllTimeSlotsDTO } from './dto/teacher-all-timeslot-stats.dto';
 import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats.dto';
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherStudentsStatsDTO } from './dto/teacher-students.stats.dto';
@@ -97,7 +96,7 @@ export class StatisticsService {
     });
   }
 
-  async getTimeslotsStatistics(user: UserEntity, moduleId: number): Promise<TeacherAllTimeSlotsDTO> {
+  async getTimeslotsStatistics(user: UserEntity, moduleId: number): Promise<TeacherTimeSlotStatsDTO[]> {
     const module = await this.moduleRepo.getById(moduleId);
     if (module.teacherId != user.id && user.userType != UserEnum.ADMIN) {
       throw new NotFoundException('There was no teaching module found.');
@@ -116,11 +115,7 @@ export class StatisticsService {
         }),
       );
     });
-    return new TeacherAllTimeSlotsDTO({
-      ...module,
-      teacher: new UserDTO(module.teacher),
-      timeSlots: timeSlotStats,
-    });
+    return timeSlotStats;
   }
 
   async getTimeslotByIdStatistics(user: UserEntity, timeslotId: number): Promise<TeacherTimeSlotStatsDTO> {

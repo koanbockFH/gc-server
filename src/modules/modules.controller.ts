@@ -62,14 +62,14 @@ export class ModulesController {
     await this.modulesService.delete(id);
   }
 
-  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
+  @UserTypes(UserEnum.TEACHER)
   @ApiCommonResponse({ type: TimeSlotDTO })
   @Post('/:moduleId/timeslot')
   async createTimeSlot(@Param('moduleId') moduleId: number, @Body() timeSlot: CreateTimeSlotDTO): Promise<TimeSlotDTO> {
     return await this.timeSlotService.create(moduleId, timeSlot);
   }
 
-  @UserTypes(UserEnum.TEACHER, UserEnum.TEACHING_STUDENT)
+  @UserTypes(UserEnum.TEACHER)
   @ApiCommonResponse({ type: TimeSlotDTO })
   @Put('/:moduleId/timeslot')
   async editTimeSlot(@Param('moduleId') moduleId: number, @Body() timeSlot: TimeSlotDTO): Promise<TimeSlotDTO> {

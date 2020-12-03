@@ -46,11 +46,17 @@ export class StatisticsService {
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
+      let totalTimeslots = 0;
+      timeSlots.forEach(slot => {
+        if (slot.endDate.getTime() <= new Date().getTime()) {
+          totalTimeslots++;
+        }
+      });
       statisticModules.push(
         new StudentModuleStatsDTO({
           ...module,
-          classes: timeSlots.length,
-          total: studentsTotal,
+          totalTimeslots,
+          totalStudents: studentsTotal,
           attended: studentsAttended,
           absent: studentsTotal - studentsAttended,
         }),
@@ -68,10 +74,15 @@ export class StatisticsService {
     const timeSlots = await this.timeSlotRepo.getAll(module.id);
     const studentList = [];
     let studentsAttendedTotal = 0;
+    let totalTimeslots = 0;
+    timeSlots.forEach(slot => {
+      if (slot.endDate.getTime() <= new Date().getTime()) {
+        totalTimeslots++;
+      }
+    });
     await this.asyncForEach(module.students, async std => {
       const student = await this.userRepo.findOne(std.id);
       let studentsAttended = 0;
-      const total = timeSlots.length;
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id, studentId: std.id }))[1];
       });
@@ -79,16 +90,16 @@ export class StatisticsService {
       studentList.push(
         new TeacherStudentsStatsDTO({
           ...student,
-          totalTimeslots: total,
+          totalTimeslots,
           attended: studentsAttended,
-          absent: total - studentsAttended,
+          absent: totalTimeslots - studentsAttended,
         }),
       );
     });
     return new TeacherModuleStudentStatsDTO({
       ...module,
       teacher: new UserDTO(module.teacher),
-      totalTimeslots: timeSlots.length,
+      totalTimeslots,
       students: studentList,
       totalStudents: studentsTotal,
       attended: studentsAttendedTotal,
@@ -154,7 +165,12 @@ export class StatisticsService {
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
-      const totalTimeslots = timeSlots.length;
+      let totalTimeslots = 0;
+      timeSlots.forEach(slot => {
+        if (slot.endDate.getTime() <= new Date().getTime()) {
+          totalTimeslots++;
+        }
+      });
       statisticModules.push(
         new TeacherModuleStatsDTO({
           ...module,
@@ -178,12 +194,17 @@ export class StatisticsService {
       await this.asyncForEach(timeSlots, async slot => {
         studentsAttended += (await this.attendanceRepo.findAndCount({ timeslotId: slot.id }))[1];
       });
-
+      let totalTimeslots = 0;
+      timeSlots.forEach(slot => {
+        if (slot.endDate.getTime() <= new Date().getTime()) {
+          totalTimeslots++;
+        }
+      });
       statisticModules.push(
         new TeacherModuleStatsDTO({
           ...module,
           teacher: new UserDTO(module.teacher),
-          totalTimeslots: timeSlots.length,
+          totalTimeslots,
           totalStudents: studentsTotal,
           attended: studentsAttended,
           absent: studentsTotal - studentsAttended,

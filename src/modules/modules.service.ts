@@ -30,6 +30,10 @@ export class ModulesService {
     if (dto.teacher == null) {
       throw new HttpException('Given teacher id does not belong to a teacher.', HttpStatus.CONFLICT);
     }
+    const checkModuleExist = await this.moduleRepo.find({ where: { code: dto.code } });
+    if (checkModuleExist.length > 0) {
+      throw new HttpException('A module with given code already exists.', HttpStatus.CONFLICT);
+    }
     const entity = await this.moduleRepo.saveOrUpdate(
       new ModuleEntity({
         ...dto,

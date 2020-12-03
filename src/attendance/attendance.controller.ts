@@ -20,7 +20,7 @@ export class AttendanceController {
   @Post('/')
   async checkIn(@Request() req: RequestWithUser, @Body() checkIn: CheckInDTO): Promise<void> {
     try {
-      return await this.attendanceService.checkIn(checkIn.timeslotId, checkIn.studentId);
+      return await this.attendanceService.checkIn(checkIn.timeslotId, checkIn.studentCode);
     } catch (e) {
       if (e instanceof DuplicateEntryException) {
         throw new HttpException(e.duplicateEntries, HttpStatus.CONFLICT);

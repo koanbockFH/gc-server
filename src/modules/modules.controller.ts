@@ -38,10 +38,10 @@ export class ModulesController {
     return await this.timeSlotService.getById(id);
   }
 
-  @UserTypes(UserEnum.ADMIN)
+  @UserTypes(UserEnum.TEACHER)
   @Delete('/timeslot/:id')
-  async deleteTimeSlot(@Param('id') id: number): Promise<void> {
-    await this.timeSlotService.delete(id);
+  async deleteTimeSlot(@Request() req: RequestWithUser, @Param('id') id: number): Promise<void> {
+    await this.timeSlotService.delete(req.user, id);
   }
 
   @ApiCommonResponse({ type: ModuleDTO })

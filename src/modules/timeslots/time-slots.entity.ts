@@ -29,7 +29,7 @@ export class TimeSlotEntity extends AuditEntity {
   @Column()
   moduleId!: number;
 
-  @ManyToOne(() => ModuleEntity)
+  @ManyToOne(() => ModuleEntity, { onDelete: 'CASCADE' })
   module!: ModuleEntity;
 
   @Column({

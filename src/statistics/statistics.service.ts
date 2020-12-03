@@ -12,8 +12,6 @@ import { TeacherModuleStudentStatsDTO } from './dto/teacher-module-student.stats
 import { TeacherModuleStatsDTO } from './dto/teacher-module.stats.dto';
 import { TeacherStudentsStatsDTO } from './dto/teacher-students.stats.dto';
 import { TeacherTimeSlotStatsDTO } from './dto/teacher-timeslot.stats.dto';
-import { TeacherModulesStatisticsDTO } from './dto/teacher-modules.stats.dto';
-import { StudentModulesStatisticsDTO } from './dto/student-modules.stats.dto';
 
 @Injectable()
 export class StatisticsService {
@@ -33,7 +31,7 @@ export class StatisticsService {
     }
   };
 
-  async getUserStatistics(id: number): Promise<StudentModulesStatisticsDTO> {
+  async getUserStatistics(id: number): Promise<StudentModuleStatsDTO[]> {
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: StudentModuleStatsDTO[] = [];
@@ -59,7 +57,7 @@ export class StatisticsService {
         }),
       );
     });
-    return new StudentModulesStatisticsDTO({ modules: statisticModules });
+    return statisticModules;
   }
 
   async getModuleStatistics(user: UserEntity, moduleId: number): Promise<TeacherModuleStudentStatsDTO> {
@@ -143,7 +141,7 @@ export class StatisticsService {
     });
   }
 
-  async getStudentStatistics(user: UserEntity, studentId: number): Promise<TeacherModulesStatisticsDTO> {
+  async getStudentStatistics(user: UserEntity, studentId: number): Promise<TeacherModuleStatsDTO[]> {
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: TeacherModuleStatsDTO[] = [];
@@ -173,12 +171,12 @@ export class StatisticsService {
         }),
       );
     });
-    return new TeacherModulesStatisticsDTO({ modules: statisticModules });
+    return statisticModules;
   }
 
-  async getModulesStatistics(): Promise<StudentModulesStatisticsDTO> {
+  async getModulesStatistics(): Promise<TeacherModuleStatsDTO[]> {
     const modules = await this.moduleRepo.getAll();
-    const statisticModules: StudentModuleStatsDTO[] = [];
+    const statisticModules: TeacherModuleStatsDTO[] = [];
     await this.asyncForEach(modules, async module => {
       const studentsTotal = module.students.length;
       const timeSlots = await this.timeSlotRepo.getAll(module.id);
@@ -188,8 +186,9 @@ export class StatisticsService {
       });
 
       statisticModules.push(
-        new StudentModuleStatsDTO({
+        new TeacherModuleStatsDTO({
           ...module,
+          teacher: new UserDTO(module.teacher),
           classes: timeSlots.length,
           total: studentsTotal,
           attended: studentsAttended,
@@ -197,6 +196,6 @@ export class StatisticsService {
         }),
       );
     });
-    return new StudentModulesStatisticsDTO({ modules: statisticModules });
+    return statisticModules;
   }
 }

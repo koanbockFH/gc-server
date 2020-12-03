@@ -142,18 +142,18 @@ export class StatisticsService {
     }
     const timeSlots = await this.timeSlotRepo.getAll(module.id);
     const attended = [];
-    const absented = [];
+    const absent = [];
     await this.asyncForEach(timeSlots, async slot => {
       const checkAttendance = await this.attendanceRepo.find({ where: { studentId, timeslotId: slot.id } });
       if (checkAttendance.length > 0) {
         attended.push(new TimeSlotDTO(slot));
       } else {
-        absented.push(new TimeSlotDTO(slot));
+        absent.push(new TimeSlotDTO(slot));
       }
     });
     return new TimeSlotAAStatsDTO({
       attended,
-      absented,
+      absent,
     });
   }
 

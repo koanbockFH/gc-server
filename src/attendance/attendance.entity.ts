@@ -25,9 +25,9 @@ export class AttendanceEntity extends AuditEntity {
   @Column()
   timeslotId!: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   student!: UserEntity;
 
-  @ManyToOne(() => TimeSlotEntity)
+  @ManyToOne(() => TimeSlotEntity, { onDelete: 'CASCADE' })
   timeslot!: TimeSlotEntity;
 }

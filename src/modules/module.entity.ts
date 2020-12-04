@@ -36,10 +36,10 @@ export class ModuleEntity extends AuditEntity {
   @Column()
   teacherId!: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   teacher!: UserEntity;
 
-  @ManyToMany(() => UserEntity)
+  @ManyToMany(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinTable()
   students!: UserEntity[];
 }

@@ -145,11 +145,13 @@ export class StatisticsService {
     const attended = [];
     const absent = [];
     await this.asyncForEach(timeSlots, async slot => {
-      const checkAttendance = await this.attendanceRepo.find({ where: { studentId, timeslotId: slot.id } });
-      if (checkAttendance.length > 0) {
-        attended.push(new TimeSlotDTO(slot));
-      } else {
-        absent.push(new TimeSlotDTO(slot));
+      if (slot.endDate.getTime() <= new Date().getTime()) {
+        const checkAttendance = await this.attendanceRepo.find({ where: { studentId, timeslotId: slot.id } });
+        if (checkAttendance.length > 0) {
+          attended.push(new TimeSlotDTO(slot));
+        } else {
+          absent.push(new TimeSlotDTO(slot));
+        }
       }
     });
     return new TimeSlotAAStatsDTO({

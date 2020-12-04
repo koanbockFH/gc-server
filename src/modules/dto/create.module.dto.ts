@@ -25,7 +25,6 @@ export class CreateModuleDTO {
   code!: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   description!: string;
 
   @ApiProperty()

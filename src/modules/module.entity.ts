@@ -30,8 +30,7 @@ export class ModuleEntity extends AuditEntity {
   @IsNotEmpty()
   code!: string;
 
-  @Column()
-  @IsNotEmpty()
+  @Column({ default: '' })
   description!: string;
 
   @Column()

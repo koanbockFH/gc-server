@@ -29,7 +29,6 @@ export class ModuleDTO {
   code!: string;
 
   @ApiProperty()
-  @IsNotEmpty()
   description!: string;
 
   @ApiProperty()

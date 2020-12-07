@@ -28,6 +28,14 @@ export class UsersService {
     return await this.userRepo.findBySearchArg(query);
   }
 
+  async getUserByCodeOrMail(codeOrMail: string): Promise<UserEntity> {
+    let user = await this.userRepo.findOne({ where: { code: codeOrMail } });
+    if (codeOrMail.includes('@')) {
+      user = await this.userRepo.findOne({ where: { mail: codeOrMail } });
+    }
+    return user;
+  }
+
   /**
    * Update or save user
    * @param user user object to update

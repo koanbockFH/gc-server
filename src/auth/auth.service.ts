@@ -19,14 +19,14 @@ export class AuthService {
    * @param password Given password of user (plain)
    */
   async validateUser(codeOrMail: string, password: string): Promise<UserDTO> {
-    const user = await this.usersService.getUsersByQuery(codeOrMail);
-    if (user[0] === undefined) {
+    const user = await this.usersService.getUserByCodeOrMail(codeOrMail);
+    if (!user) {
       throw new UnauthorizedException('Code or mail is invalid.');
     }
-    if (!bcrypt.compareSync(password, user[0].password)) {
+    if (!bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException('Password is invalid.');
     }
-    return new UserDTO(user[0]);
+    return new UserDTO(user);
   }
 
   /**
@@ -64,12 +64,12 @@ export class AuthService {
    * @param user User object which gets from database
    */
   async register(user: RegisterUserDTO): Promise<Message> {
-    let check = await this.usersService.getUsersByQuery(user.code);
-    if (check[0] !== undefined) {
+    let check = await this.usersService.getUserByCodeOrMail(user.code);
+    if (check) {
       throw new HttpException('User with this code is already registered.', HttpStatus.CONFLICT);
     }
-    check = await this.usersService.getUsersByQuery(user.mail);
-    if (check[0] !== undefined) {
+    check = await this.usersService.getUserByCodeOrMail(user.mail);
+    if (check) {
       throw new HttpException('User with this mail is already registered.', HttpStatus.CONFLICT);
     }
     await this.usersService.saveOrUpdate(user);

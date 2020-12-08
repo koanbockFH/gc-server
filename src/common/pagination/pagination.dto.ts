@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+/**
+ * allow for generic pagination of objects
+ */
 export class Pagination<T> {
   constructor(items: T[], currentPage: number, totalPages: number) {
     this.items = items;

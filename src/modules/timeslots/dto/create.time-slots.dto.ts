@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
+/**
+ * TimeSlot dto used for creating a new TimeSlot
+ */
 export class CreateTimeSlotDTO {
   constructor(defaultValues: Partial<CreateTimeSlotDTO> = {}) {
     this.mapValues(defaultValues);

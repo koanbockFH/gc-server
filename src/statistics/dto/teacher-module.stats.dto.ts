@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { UserDTO } from 'src/users/dto/user.dto';
 import { ClassStatsDTO } from './class-stats.dto';
 
+/**
+ * Statistics of a module (from a teachers view)
+ */
 export class TeacherModuleStatsDTO extends ClassStatsDTO {
   constructor(defaultValues: Partial<TeacherModuleStatsDTO> = {}) {
     if (defaultValues == null) return;

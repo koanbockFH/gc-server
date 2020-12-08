@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
+/**
+ * DTO to record attendance of student
+ */
 export class CheckInDTO {
   constructor(defaultValues: Partial<CheckInDTO> = {}) {
     this.mapValues(defaultValues);

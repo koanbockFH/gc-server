@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 import { UserDTO } from 'src/users/dto/user.dto';
 
+/**
+ * Module dto used for creating a new module
+ */
 export class CreateModuleDTO {
   constructor(defaultValues: Partial<CreateModuleDTO> = {}) {
     this.mapValues(defaultValues);

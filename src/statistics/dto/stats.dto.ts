@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+/**
+ * basic stats dto
+ */
 export class StatsDTO {
   constructor(defaultValues: Partial<StatsDTO> = {}) {
     if (defaultValues == null) return;

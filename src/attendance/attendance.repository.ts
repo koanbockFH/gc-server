@@ -6,6 +6,7 @@ import { AttendanceEntity } from './attendance.entity';
 @EntityRepository(AttendanceEntity)
 export class AttendanceRepository extends Repository<AttendanceEntity> {
   async saveOrUpdate(entity: AttendanceEntity): Promise<AttendanceEntity> {
+    //validate based on class validator decorators
     const errors = await validate(entity);
     if (errors.length > 0) {
       throw errors;

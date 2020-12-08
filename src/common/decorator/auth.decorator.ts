@@ -3,6 +3,9 @@ import { ApiBearerAuth, ApiForbiddenResponse, ApiUnauthorizedResponse } from '@n
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UserTypeGuard } from 'src/auth/user-type.guard';
 
+/**
+ * Decorators needed for REST API and authentication
+ */
 export function Auth(): any {
   return applyDecorators(
     ApiBearerAuth(),

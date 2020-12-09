@@ -12,6 +12,10 @@ import { ModuleRepository } from './modules.repository';
 export class ModulesService {
   constructor(private moduleRepo: ModuleRepository, private userRepository: UserRepository) {}
 
+  /**
+   * validate if the user list is valid - e.g. if only students are part of student list
+   * @param dto module dto
+   */
   async validateUserList(dto: ModuleDTO | CreateModuleDTO): Promise<void> {
     const asyncFilter = async (arr, predicate) =>
       Promise.all(arr.map(predicate)).then(results => arr.filter((_v, index) => results[index]));

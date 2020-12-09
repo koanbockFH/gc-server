@@ -1,6 +1,9 @@
 import { Type } from 'class-transformer';
 import { BeforeInsert, BeforeUpdate, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+/**
+ * basic entity structure, with audit entries for later analysis of service usage
+ */
 export abstract class BaseEntity {
   constructor(defaultValues: Partial<BaseEntity> = {}) {
     if (defaultValues == null) return;

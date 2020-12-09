@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEnum } from '../enum/user.enum';
 
+/**
+ * basic user dto for response (get) or updates
+ */
 export class UserDTO {
   constructor(defaultValues: Partial<UserDTO> = {}) {
     this.mapValues(defaultValues);

@@ -2,6 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
 import { UserEnum } from '../enum/user.enum';
 
+/**
+ * dto used for registration of new users
+ */
 export class RegisterUserDTO {
   @ApiProperty()
   @IsNotEmpty()

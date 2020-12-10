@@ -193,15 +193,12 @@ export class StatisticsService {
     });
   }
 
-  async getStudentStatistics(user: UserEntity, studentId: number): Promise<TeacherModuleStatsDTO[]> {
+  async getStudentStatistics(studentId: number): Promise<TeacherModuleStatsDTO[]> {
     const modules = await this.moduleRepo.getAll();
     const asignedModules = [];
     const statisticModules: TeacherModuleStatsDTO[] = [];
     modules.forEach(module => {
-      if (
-        (module.teacherId == user.id || user.userType == UserEnum.ADMIN) &&
-        module.students.some(s => s.id == studentId)
-      ) {
+      if (module.students.some(s => s.id == studentId)) {
         asignedModules.push(module);
       }
     });

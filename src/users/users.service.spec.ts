@@ -6,6 +6,7 @@ import { UserEnum } from './enum/user.enum';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './users.repository';
 import { UsersService } from './users.service';
+import * as bcrypt from 'bcryptjs';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -40,13 +41,12 @@ describe('UsersService', () => {
       firstName: 'Max',
       lastName: 'Mustermann',
       code: 'maximus',
-      password: 'SomeHash',
+      password: bcrypt.hashSync('SomeHash', 8),
       mail: 'max@mustermann.com',
       userType: UserEnum.STUDENT,
     };
     repository.saveOrUpdate = jest.fn();
     await service.saveOrUpdate(user);
-    //TODO we need to adjust this test, since password is hashed it is no longer working
     expect(repository.saveOrUpdate).toHaveBeenCalledTimes(1);
   });
 

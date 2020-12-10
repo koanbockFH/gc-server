@@ -44,7 +44,7 @@ export class StatisticsController {
     @Request() req: RequestWithUser,
     @Param('studentId') studentId: number,
   ): Promise<TeacherModuleStatsDTO[]> {
-    return await this.statisticsService.getStudentStatistics(req.user, studentId);
+    return await this.statisticsService.getStudentStatistics(studentId);
   }
 
   @ApiCommonResponse({ type: TeacherModuleStudentStatsDTO })

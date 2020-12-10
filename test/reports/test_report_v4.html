@@ -1,0 +1,807 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Unit test report</title>
+  <style type="text/css">
+    html,
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 1rem;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    body {
+      padding: 2rem 1rem;
+      font-size: 0.85rem;
+    }
+
+    #jesthtml-content {
+      margin: 0 auto;
+      max-width: 70rem;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+    }
+
+    #title {
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    #logo {
+      height: 4rem;
+    }
+
+    /** SUMMARY */
+    #summary {
+      color: #333;
+      margin: 2rem 0;
+      display: flex;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    #summary>div {
+      margin-right: 2rem;
+      background: #eee;
+      padding: 1rem;
+      min-width: 15rem;
+    }
+
+    #summary>div:last-child {
+      margin-right: 0;
+    }
+
+    @media only screen and (max-width: 720px) {
+      #summary {
+        flex-direction: column;
+      }
+
+      #summary>div {
+        margin-right: 0;
+        margin-top: 2rem;
+      }
+
+      #summary>div:first-child {
+        margin-top: 0;
+      }
+    }
+
+    .summary-total {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-passed {
+      color: #4f8a10;
+      border-left: 0.4rem solid #4f8a10;
+      padding-left: 0.5rem;
+    }
+
+    .summary-failed,
+    .summary-obsolete-snapshots {
+      color: #d8000c;
+      border-left: 0.4rem solid #d8000c;
+      padding-left: 0.5rem;
+    }
+
+    .summary-pending {
+      color: #9f6000;
+      border-left: 0.4rem solid #9f6000;
+      padding-left: 0.5rem;
+    }
+
+    .summary-empty {
+      color: #999;
+      border-left: 0.4rem solid #999;
+    }
+
+    .test-result {
+      padding: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .test-result:last-child {
+      border: 0;
+    }
+
+    .test-result.passed {
+      background-color: #dff2bf;
+      color: #4f8a10;
+    }
+
+    .test-result.failed {
+      background-color: #ffbaba;
+      color: #d8000c;
+    }
+
+    .test-result.pending {
+      background-color: #ffdf61;
+      color: #9f6000;
+    }
+
+    .test-info {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .test-suitename {
+      width: 20%;
+      text-align: left;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .test-title {
+      width: 40%;
+      text-align: left;
+      font-style: italic;
+    }
+
+    .test-status {
+      width: 20%;
+      text-align: right;
+    }
+
+    .test-duration {
+      width: 10%;
+      text-align: right;
+      font-size: 0.75rem;
+    }
+
+    .failureMessages {
+      padding: 0 1rem;
+      margin-top: 1rem;
+      border-top: 1px dashed #d8000c;
+    }
+
+    .failureMessages.suiteFailure {
+      border-top: none;
+    }
+
+    .failureMsg {
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .suite-container {
+      margin-bottom: 2rem;
+    }
+
+    .suite-info {
+      padding: 1rem;
+      background-color: #eee;
+      color: #777;
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .suite-info .suite-path {
+      word-break: break-all;
+      flex-grow: 1;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    .suite-info .suite-time {
+      margin-left: 0.5rem;
+      padding: 0.2rem 0.3rem;
+      font-size: 0.75rem;
+    }
+
+    .suite-info .suite-time.warn {
+      background-color: #d8000c;
+      color: #fff;
+    }
+
+    /* CONSOLE LOGS */
+    .suite-consolelog {
+      margin-bottom: 0.25rem;
+      padding: 1rem;
+      background-color: #efefef;
+    }
+
+    .suite-consolelog-header {
+      font-weight: bold;
+    }
+
+    .suite-consolelog-item {
+      padding: 0.5rem;
+    }
+
+    .suite-consolelog-item pre {
+      margin: 0.5rem 0;
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .suite-consolelog-item-origin {
+      color: #777;
+      font-weight: bold;
+    }
+
+    .suite-consolelog-item-message {
+      color: #000;
+      font-size: 1rem;
+      padding: 0 0.5rem;
+    }
+
+    /* OBSOLETE SNAPSHOTS */
+    .suite-obsolete-snapshots {
+      margin-bottom: 0.25rem;
+      padding: 1rem;
+      background-color: #ffbaba;
+      color: #d8000c;
+    }
+
+    .suite-obsolete-snapshots-header {
+      font-weight: bold;
+    }
+
+    .suite-obsolete-snapshots-item {
+      padding: 0.5rem;
+    }
+
+    .suite-obsolete-snapshots-item pre {
+      margin: 0.5rem 0;
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .suite-obsolete-snapshots-item-message {
+      color: #000;
+      font-size: 1rem;
+      padding: 0 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="jesthtml-content">
+    <header>
+      <h1 id="title">Unit test report</h1>
+    </header>
+    <div id="metadata-container">
+      <div id="summary">
+        <div id="suite-summary">
+          <div class="summary-total">Suites (8)</div>
+          <div class="summary-passed">8 passed</div>
+          <div class="summary-failed summary-empty">0 failed</div>
+          <div class="summary-pending summary-empty">0 pending</div>
+        </div>
+        <div id="test-summary">
+          <div class="summary-total">Tests (55)</div>
+          <div class="summary-passed">55 passed</div>
+          <div class="summary-failed summary-empty">0 failed</div>
+          <div class="summary-pending summary-empty">0 pending</div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-1" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\auth\token\token.repository.spec.ts</div>
+        <div class="suite-time warn">5.68s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TokenRepository &gt; findByToken</div>
+            <div class="test-title">successfull retrieval</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.513s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TokenRepository &gt; findByToken</div>
+            <div class="test-title">failed retrieval - no item found - null value</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.345s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TokenRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">Save new Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.087s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TokenRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">update existing Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.121s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TokenRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">fail validation on save or update</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.093s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-2" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\auth\auth.controller.spec.ts</div>
+        <div class="suite-time">0.225s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">AuthController</div>
+            <div class="test-title">exists</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.001s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-3" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\statistics\statistics.service.spec.ts</div>
+        <div class="suite-time warn">6.637s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">StatisticsService &gt; teacher view</div>
+            <div class="test-title">stats of specific student</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.039s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">StatisticsService &gt; teacher view</div>
+            <div class="test-title">stats of specific module</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.007s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">StatisticsService &gt; teacher view</div>
+            <div class="test-title">stats of timeslots of specific module</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.006s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">StatisticsService &gt; teacher view</div>
+            <div class="test-title">stats of timeslots of specific student</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.006s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">StatisticsService &gt; admin view</div>
+            <div class="test-title">statistics of all users</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.007s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-4" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\users\users.service.spec.ts</div>
+        <div class="suite-time warn">6.655s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UsersService</div>
+            <div class="test-title">getBySearchArg</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.025s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UsersService</div>
+            <div class="test-title">getUserById</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.007s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UsersService</div>
+            <div class="test-title">saveOrUpdate</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.103s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UsersService &gt; getPublic</div>
+            <div class="test-title">successful get</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.006s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UsersService &gt; getPublic</div>
+            <div class="test-title">failed get</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.005s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-5" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\auth\auth.service.spec.ts</div>
+        <div class="suite-time warn">6.932s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">The AuthenticationService &gt; when accessing the data of authenticating user
+            </div>
+            <div class="test-title">should attempt to get a user by query</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.021s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">The AuthenticationService &gt; when accessing the data of authenticating user
+              &gt; and the provided password is not valid</div>
+            <div class="test-title">should throw an error</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.023s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">The AuthenticationService &gt; when accessing the data of authenticating user
+              &gt; and the provided password is valid &gt; and the user is found in the database</div>
+            <div class="test-title">should return the user data</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.005s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">The AuthenticationService &gt; when accessing the data of authenticating user
+              &gt; and the provided password is valid &gt; and the user is not found in the database</div>
+            <div class="test-title">should throw an error</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.005s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-6" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\modules\modules.repository.spec.ts</div>
+        <div class="suite-time warn">7.064s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; getById</div>
+            <div class="test-title">successfull retrieval</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.559s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; getById</div>
+            <div class="test-title">failed retrieval - no item found - null value</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.031s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; getAll</div>
+            <div class="test-title">All for Admin</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.03s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; getAll</div>
+            <div class="test-title">All by teacher</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.031s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; getAll</div>
+            <div class="test-title">All by Student</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.044s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">Save new Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.023s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">update existing Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.039s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">ModuleRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">fail validation on save or update</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.013s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-7" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global
+          Classroom\gc-server\src\modules\timeslots\time-slots.repository.spec.ts</div>
+        <div class="suite-time warn">7.062s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; getById</div>
+            <div class="test-title">successfull retrieval</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.505s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; getById</div>
+            <div class="test-title">failed retrieval - no item found - null value</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.042s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; getAll</div>
+            <div class="test-title">successfull retrieval</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.046s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">Save new Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.027s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">update existing Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.046s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">TimeSlotRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">fail validation on save or update</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.015s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="suite-8" class="suite-container">
+      <div class="suite-info">
+        <div class="suite-path">P:\22_Dublin\Global Classroom\gc-server\src\users\users.repository.spec.ts</div>
+        <div class="suite-time warn">8.033s</div>
+      </div>
+      <div class="suite-tests">
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; FindByCredentials</div>
+            <div class="test-title">fetch by code/pwd findByCredentials</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.482s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; FindByCredentials</div>
+            <div class="test-title">fetch by mail/pwd findByCredentials</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.026s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; FindByCredentials</div>
+            <div class="test-title">fail findByCredentials (No User found)</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.053s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">Search by partial firstName</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.015s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">Search by partial lastName</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.008s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">Search by partial code</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.01s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">case insensitive</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.007s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">Search multiple results</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.015s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; Search User</div>
+            <div class="test-title">Search multiple results with Limit</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.012s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">Save new Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.02s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">update existing Item</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.018s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; SaveOrUpdate</div>
+            <div class="test-title">fail validation on save or update</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.011s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll ; Pagination 0</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.171s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll ; Pagination 10</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.127s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll Students ; Pagination 0</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.114s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll Students ; Pagination 10</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.121s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll Teachers ; Pagination 0</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.138s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">getAll Teachers ; Pagination 10</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.116s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">search By code for teacher ; Pagination 10</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.112s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">search By code for students ; Pagination 10</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.112s</div>
+          </div>
+        </div>
+        <div class="test-result passed">
+          <div class="test-info">
+            <div class="test-suitename">UserRepository &gt; pagination</div>
+            <div class="test-title">search By code ; Pagination 10 =&gt; no result</div>
+            <div class="test-status">passed</div>
+            <div class="test-duration">0.11s</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

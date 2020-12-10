@@ -63,6 +63,7 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "26.0.1",
+    "jest-html-reporter": "^3.3.0",
     "prettier": "^1.19.1",
     "sqlite3": "^5.0.0",
     "supertest": "^4.0.2",
@@ -90,6 +91,13 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "reporters": [
+      "default",
+      ["../node_modules/jest-html-reporter", {
+        "pageTitle": "Unit test report",
+        "outputPath": "test/reports/test_report_v1.html"
+      }]
+    ]
   }
 }

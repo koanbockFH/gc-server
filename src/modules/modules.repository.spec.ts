@@ -221,9 +221,8 @@ describe('ModuleRepository', () => {
       } catch (e) {
         if (Array.isArray(e) && e[0] instanceof ValidationError) {
           expect(e.find((error: ValidationError) => error.property == 'code')).toBeInstanceOf(ValidationError);
-          expect(e.find((error: ValidationError) => error.property == 'description')).toBeInstanceOf(ValidationError);
           expect(e.find((error: ValidationError) => error.property == 'name')).toBeInstanceOf(ValidationError);
-          expect(e).toHaveLength(3);
+          expect(e).toHaveLength(2);
         } else {
           fail('This should not have happened: ' + e);
         }
